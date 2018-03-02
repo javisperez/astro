@@ -1,0 +1,29 @@
+.btn {
+  @apply .font-bold .py-2 .px-4 .border .border-transparent .rounded;
+
+  &.btn-blue {
+    @apply .bg-blue;
+
+    &:focus,
+    &:hover {
+        @apply .bg-blue-dark;
+        outline: none;
+    }
+
+    &:active {
+        @apply .bg-blue-darker;
+    }
+    }
+
+  &.btn-xs {
+    @apply .text-xs .p-1;
+  }
+
+  &.btn-lg {
+    @apply .text-lg .p-2;
+  }
+
+  &[disabled] {
+    @apply .opacity-50 .cursor-not-allowed;
+  }
+}

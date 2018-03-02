@@ -1,0 +1,12 @@
+.reader {
+    @apply .flex;
+
+    .reader-page {
+        @apply .flex-1;
+
+        > img {
+            width: 100%;
+            height: auto;
+        }
+    }
+}

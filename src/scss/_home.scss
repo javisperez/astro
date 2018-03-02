@@ -1,0 +1,22 @@
+.extracting {
+    @apply .bg-ebony .text-center .absolute .pin .text-4xl .text-yellow-dark .flex .justify-center .items-center;
+}
+
+.home {
+    @apply .absolute .pin .text-center .flex .justify-center .items-center;
+}
+
+.toolbar {
+    @apply .bg-ebony-darkest .p-2 .text-xl;
+
+    button {
+        @apply .text-grey-darkest;
+
+        &:hover,
+        &:active,
+        &:focus {
+            @apply .text-grey;
+            outline: none;
+        }
+    }
+}

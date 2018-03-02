@@ -1,0 +1,45 @@
+html {
+    height: 100%;
+}
+
+body {
+    @apply .bg-ebony-darker;
+
+    min-height: 100%;
+    height: auto;
+}
+
+.window {
+    @apply text-white;
+
+    .draggable {
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+    }
+
+    .undraggable {
+        -webkit-app-region: no-drag;
+    }
+
+    .titlebar {
+        @apply .p-2 .text-sm .text-white .bg-ebony;
+
+        .titlebar-button {
+            @apply .opacity-25 .cursor-pointer;
+            transition: opacity 400ms;
+
+            &:hover {
+                @apply .opacity-100 .cursor-pointer;
+            }
+
+            &.close:hover {
+                @apply .text-brick-dark;
+            }
+        }
+    }
+
+    .content {
+        @apply .relative;
+        height: calc(100vh - 33px);
+    }
+}

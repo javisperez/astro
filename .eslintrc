@@ -1,0 +1,42 @@
+{
+    "extends": [
+        "vue"
+    ],
+    "plugins": [
+        "vue"
+    ],
+    "globals": {
+        "window": true,
+        "FileReader": true
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        // "one-var": [
+        //     "error",
+        //     "always"
+        // ],
+        "comma-dangle": "off",
+        "space-before-function-paren": 0,
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-return-assign": [
+            "error",
+            "except-parens"
+        ],
+        "curly": [
+            "off",
+            "multi"
+        ],
+        "camelcase": [
+            "error",
+            {
+                "properties": "never"
+            }
+        ]
+    }
+}
