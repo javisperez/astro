@@ -15,7 +15,7 @@ class CbrExtractor extends Extractor {
             return [];
         }
 
-        return extracted[1].files.reverse();
+        return extracted[1].files;
     }
 
     transform(item) {

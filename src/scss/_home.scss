@@ -1,5 +1,6 @@
 .extracting {
     @apply .bg-ebony .text-center .absolute .pin .text-4xl .text-yellow-dark .flex .justify-center .items-center;
+    z-index: 2;
 }
 
 .home {
@@ -15,8 +16,11 @@
         &:hover,
         &:active,
         &:focus {
-            @apply .text-grey;
             outline: none;
+        }
+
+        &:hover {
+            @apply .text-grey;
         }
     }
 }

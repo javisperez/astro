@@ -4,12 +4,26 @@ export default {
 
     props: {
         path: String
+    },
+
+    data() {
+        return {
+            isLoaded: false,
+        };
+    },
+
+    mounted() {
+        const img = this.$el.querySelector('img');
+
+        img.onload = () => {
+            this.isLoaded = true;
+        };
     }
 }
 </script>
 
 <template>
-    <div class="reader-page">
+    <div class="reader-page" :class="{ visible: isLoaded }">
         <img :src="path">
     </div>
 </template>

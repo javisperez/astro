@@ -2,6 +2,7 @@ export default
 class Collection {
     /**
      * Initialize the class instance
+     *
      * @param {Array} array - Initializing array
      */
     constructor(array = []) {
@@ -10,6 +11,7 @@ class Collection {
 
     /**
      * Add an item to the collection
+     *
      * @param {*} item - Item to add
      * @memberof Collection
      */
@@ -19,7 +21,9 @@ class Collection {
 
     /**
      * Get all the items
+     *
      * @memberof Collection
+     * @return Set
      */
     all() {
         return this.items;
@@ -27,8 +31,10 @@ class Collection {
 
     /**
      * Foreach
+     *
      * @param {Function} fn - A callback function to validate
      * @memberof Collection
+     * @return Collection
      */
     forEach(fn) {
         return this.items.forEach(fn);
@@ -39,8 +45,13 @@ class Collection {
      *
      * @param {Function} fn - A function to validate the filter
      * @memberof Collection
+     * @return Collection
      */
     filter(fn) {
+        if (!fn) {
+            return this.all();
+        }
+
         const filtered = new Collection();
 
         this.forEach(item => {
@@ -50,6 +61,34 @@ class Collection {
         });
 
         return filtered;
+    }
+
+    /**
+     * Map method
+     *
+     * @param {Function} fn - The validation function
+     * @return Collection
+     */
+    map(fn) {
+        if (!fn) {
+            return this.all();
+        }
+
+        const mapped = new Collection();
+
+        this.forEach(item => {
+            mapped.add(fn(item));
+        });
+
+        return mapped;
+    }
+
+    /**
+     * Convert the collection to an Array
+     * @return Array
+    */
+    toArray() {
+        return Array.from(this.items);
     }
 
     /**

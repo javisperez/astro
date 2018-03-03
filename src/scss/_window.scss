@@ -3,14 +3,14 @@ html {
 }
 
 body {
-    @apply .bg-ebony-darker;
+    @apply .bg-ebony-darker .overflow-hidden;
 
     min-height: 100%;
     height: auto;
 }
 
 .window {
-    @apply text-white;
+    @apply text-white .overflow-hidden;
 
     .draggable {
         -webkit-user-select: none;
@@ -22,24 +22,45 @@ body {
     }
 
     .titlebar {
-        @apply .p-2 .text-sm .text-white .bg-ebony;
+        @apply .relative .p-2 .text-sm .text-white .bg-ebony .fixed .pin-t .pin-l .pin-r .flex;
+
+        &.windows {
+            @apply .flex-row-reverse;
+
+            .titlebar-button.minimize {
+                order: 1;
+            }
+        }
 
         .titlebar-button {
             @apply .opacity-25 .cursor-pointer;
             transition: opacity 400ms;
+            margin-left: 3px;
+            margin-right: 3px;
 
             &:hover {
                 @apply .opacity-100 .cursor-pointer;
+            }
+
+            &:active {
+                transform: scale(0.85);
             }
 
             &.close:hover {
                 @apply .text-brick-dark;
             }
         }
+
+        .title {
+            @apply .absolute .pin .text-center .text-grey-dark;
+
+            padding-top: 8px;
+        }
     }
 
     .content {
-        @apply .relative;
-        height: calc(100vh - 33px);
+        @apply .relative .overflow-hidden;
+        margin-top: 1.8rem;
+        height: calc(100vh - 29px);
     }
 }
