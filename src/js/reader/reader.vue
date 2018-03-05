@@ -54,7 +54,19 @@ export default {
                 return;
             }
 
-            const pages = Array.from(this.$pages);
+            this.$pages.forEach((page, i) => {
+                if (!this.isOnViewport(page)) {
+                    return;
+                }
+
+                this.currentIndex = i;
+            });
+        },
+
+        isOnViewport(el) {
+            const rect = el.getBoundingClientRect();
+
+            return rect.top > 0 && rect.top <= (window.innerHeight / 2);
         },
 
         isVisible(index) {

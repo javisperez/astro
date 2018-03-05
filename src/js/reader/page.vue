@@ -24,6 +24,6 @@ export default {
 
 <template>
     <div class="reader-page" :class="{ visible: isLoaded }">
-        <img :src="path">
+            <img :src="path">
     </div>
 </template>

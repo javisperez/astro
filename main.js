@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, Menu, BrowserWindow } = require('electron');
 
 let mainWindow;
 
@@ -9,10 +9,11 @@ function createWindow() {
      * Initial window options
      */
     mainWindow = new BrowserWindow({
-        'width': 1000,
-        'height': 800,
+        'minWidth': 800,
+        'minHeight': 600,
         'frame': false,
-        'standard-window': false
+        'standard-window': false,
+        'title': 'Astro',
     });
 
     mainWindow.useContentSize = true;
@@ -34,6 +35,34 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
+
+    // Set the file menu options
+    const template = [
+        {
+            role: 'window',
+            submenu: [
+                { role: 'minimize' },
+                { role: 'close' },
+            ]
+        },
+
+        {
+            role: 'help',
+            submenu: [
+                {
+                    label: 'Learn More',
+                    click () {
+                        require('electron').shell.openExternal('https://electronjs.org')
+                    }
+                }
+            ]
+        }
+    ];
+console.log('process env', process.env.NODE_ENV);
+    // if (process.env.NODE_ENV !== 'development') {
+        // const menu = Menu.buildFromTemplate(template);
+        // Menu.setApplicationMenu(menu);
+    // }
 }
 
 app.on('ready', () => {

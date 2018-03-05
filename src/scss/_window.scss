@@ -55,6 +55,7 @@ body {
             @apply .absolute .pin .text-center .text-grey-dark;
 
             padding-top: 8px;
+            pointer-events: none;
         }
     }
 
