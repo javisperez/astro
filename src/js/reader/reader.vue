@@ -11,13 +11,14 @@ export default {
 
     props: {
         files: Array,
-        metadata: Object
+        metadata: Object,
     },
 
     data() {
         return {
-            currentIndex: 0,
-            readingMode: 'default'
+            currentIndex: Number(localStorage.getItem(`${this.metadata.key}-current-index`)) || 0,
+            currentMode: localStorage.getItem(`${this.metadata.key}-current-mode`) || 'default',
+            isTransitioning: false,
         };
     },
 
@@ -34,40 +35,52 @@ export default {
 
         nextImage() {
             this.currentIndex = Math.min(this.files.length - 1, this.currentIndex + 1);
+            this.saveHistory();
         },
 
         previousImage() {
             this.currentIndex = Math.max(0, this.currentIndex - 1);
+            this.saveHistory();
         },
 
-        toggleReadingMode(mode = 'default') {
-            if (this.readingMode === mode) {
-                this.readingMode = 'default';
-            } else {
-                this.readingMode = mode;
+        toggleCurrentMode(mode = 'default') {
+            if (this.isTransitioning) {
+                return;
             }
 
-            // now flip it!
+            this.isTransitioning = true;
+
+            if (this.currentMode === mode) {
+                this.currentMode = 'default';
+            } else {
+                this.currentMode = mode;
+            }
+
+            // Save it
+            this.saveHistory();
+
+            // And now flip it!
             const page = this.$refs[`page${this.currentIndex}`][0].$el;
             const first = page.getBoundingClientRect();
 
             this.$nextTick(() => {
                 const last = page.getBoundingClientRect();
 
-                // this.flip(
-                //     page,
-                //     `scale(${first.width / last.width})`,
-                //     `scale(1)`,
-                //     () => {
-                //         // this.isSettingMode = false;
-                //     },
-                //     400
-                // );
+                // Animate the transition
+                this.flip(
+                    page,
+                    `scale(${first.width / last.width})`,
+                    `scale(1)`,
+                    () => {
+                        this.isTransitioning = false;
+                    },
+                    400
+                );
             });
         },
 
         setCurrentPageFromScroll() {
-            if (this.readingMode !== 'continuous') {
+            if (this.currentMode !== 'continuous') {
                 return;
             }
 
@@ -87,7 +100,7 @@ export default {
         },
 
         isVisible(index) {
-            if (this.readingMode === 'continuous') {
+            if (this.currentMode === 'continuous') {
                 return true;
             }
 
@@ -95,7 +108,7 @@ export default {
                 return true;
             }
 
-            if (this.readingMode === 'split' && index === this.currentIndex + 1) {
+            if (this.currentMode === 'split' && index === this.currentIndex + 1) {
                 return true;
             }
 
@@ -118,12 +131,22 @@ export default {
                 if (callback) {
                     callback();
                 }
-            }, duration);
+            }, duration + 50);
         },
+
+        saveHistory() {
+            localStorage.setItem(`${this.metadata.key}-current-index`, this.currentIndex);
+            localStorage.setItem(`${this.metadata.key}-current-mode`, this.currentMode);
+        }
     },
 
     watch: {
-        readingMode(value, previous) {
+        currentPage(value) {
+            console.log(value);
+            this.currentIndex = value;
+        },
+
+        currentMode(value, previous) {
             if (value === 'continuous') {
                 const pages = this.$pages;
                 let offsetScroll = -41; // toolbar height
@@ -141,10 +164,6 @@ export default {
     },
 
     computed: {
-        currentImage() {
-            return this.files[this.currentIndex];
-        },
-
         progress() {
             return (this.currentIndex + 1) / this.files.length;
         },
@@ -181,14 +200,14 @@ export default {
             </button>
 
             <!-- Continuous mode -->
-            <button class="tool" title="Continuous mode" :class="{active: readingMode === 'continuous'}"
-                @click="toggleReadingMode('continuous')">
+            <button class="tool" title="Continuous mode" :class="{active: currentMode === 'continuous'}"
+                @click="toggleCurrentMode('continuous')">
                 <i class="fa fa-angle-double-down"></i>
             </button>
 
             <!-- Split mode -->
-            <button class="tool" title="Split mode" :class="{active: readingMode === 'split'}"
-                @click="toggleReadingMode('split')">
+            <button class="tool" title="Split mode" :class="{active: currentMode === 'split'}"
+                @click="toggleCurrentMode('split')">
                 <i class="fa fa-columns"></i>
             </button>
 
@@ -205,7 +224,7 @@ export default {
     </div>
 
     <!-- The pages -->
-    <div class="pages" ref="pages" :class="[readingMode]">
+    <div class="pages" ref="pages" :class="[currentMode]">
         <page v-for="(image, $index) in files" :ref="'page'+$index" :key="$index"
             v-show="isVisible($index)" :path="image"></page>
     </div>

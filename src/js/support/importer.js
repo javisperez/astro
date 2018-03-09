@@ -41,8 +41,8 @@ class Importer {
                     }
 
                     const basename = path.basename(file, path.extname(file));
-
-                    const tmp = path.join(os.tmpdir(), 'astro', 'cache', md5File.sync(file));
+                    const fileKey = md5File.sync(file);
+                    const tmp = path.join(os.tmpdir(), 'astro', 'cache', fileKey);
 
                     if (!fs.existsSync(tmp)) {
                         mkdirp.sync(tmp);
@@ -97,6 +97,9 @@ class Importer {
 
                         // All the pages
                         data.pages = files;
+
+                        // Unique key per file
+                        data.key = fileKey;
 
                         // Resolve it
                         resolve(data);

@@ -20,6 +20,7 @@ export default {
             comic: {},
             files: [],
             title: '',
+            currentPage: 0,
         };
     },
 
@@ -28,14 +29,19 @@ export default {
             Importer.open({
                     onSelect: (filename) => {
                         this.isExtracting = true;
-                        this.title = `Importing ${filename}...`
+                        this.title = `Importing ${filename}...`;
+                        // Clear the files to re-render the reader
+                        this.files = [];
                     }
                 })
                 .then((data) => {
+                    this.currentPage = 0;
                     this.comic = {
                         title: data.info.title,
                         file: data.info.filename,
                         pages: data.pages,
+                        basename: data.info.basename,
+                        key: data.key,
                     };
                     this.files = data.pages.map(p => p.path).toArray();
                     this.isExtracting = false;
@@ -111,7 +117,7 @@ export default {
             </div>
 
             <!-- Reader -->
-            <reader :files="files" :metadata="comic" @open="openFile" v-if="files.length"></reader>
+            <reader :files="files" :metadata="comic" @open="openFile" :current-page="currentPage" v-if="files.length"></reader>
         </div>
     </div>
 </template>
