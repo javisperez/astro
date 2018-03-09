@@ -43,10 +43,27 @@ export default {
         toggleReadingMode(mode = 'default') {
             if (this.readingMode === mode) {
                 this.readingMode = 'default';
-                return;
+            } else {
+                this.readingMode = mode;
             }
 
-            this.readingMode = mode;
+            // now flip it!
+            const page = this.$refs[`page${this.currentIndex}`][0].$el;
+            const first = page.getBoundingClientRect();
+
+            this.$nextTick(() => {
+                const last = page.getBoundingClientRect();
+
+                // this.flip(
+                //     page,
+                //     `scale(${first.width / last.width})`,
+                //     `scale(1)`,
+                //     () => {
+                //         // this.isSettingMode = false;
+                //     },
+                //     400
+                // );
+            });
         },
 
         setCurrentPageFromScroll() {
@@ -83,7 +100,26 @@ export default {
             }
 
             return false;
-        }
+        },
+
+        flip(element, from, to, callback, duration = 400) {
+            element.style.transformOrigin = '0 0';
+            element.style.transform = from;
+
+            setTimeout(() => {
+                element.style.transition = `transform ${duration / 1000}s`;
+                element.style.transform = to;
+            });
+
+            setTimeout(() => {
+                element.style.transform = 'none';
+                element.style.transition = 'none';
+
+                if (callback) {
+                    callback();
+                }
+            }, duration);
+        },
     },
 
     watch: {
@@ -170,7 +206,8 @@ export default {
 
     <!-- The pages -->
     <div class="pages" ref="pages" :class="[readingMode]">
-        <page v-for="(image, $index) in files" :key="$index" v-show="isVisible($index)" :path="image"></page>
+        <page v-for="(image, $index) in files" :ref="'page'+$index" :key="$index"
+            v-show="isVisible($index)" :path="image"></page>
     </div>
   </div>
 </template>
