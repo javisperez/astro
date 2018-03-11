@@ -2,3 +2,6 @@
 .DS_Store
 dist
 node_modules
+package
+npm-debug.log
+yarn-error.log
