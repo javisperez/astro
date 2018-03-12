@@ -98,7 +98,7 @@ export default {
             </span>
 
             <span class="title">
-                <span v-if="title">{{ title }} - </span>Astro
+                <span v-if="title">{{ title }} -&nbsp;</span>Astro
             </span>
         </div>
 
@@ -106,7 +106,7 @@ export default {
         <div class="content">
             <!-- Default state -->
             <div class="home" v-if="!files.length">
-                <button @click="openFile" class="btn text-xl text-grey">
+                <button @click="openFile" class="btn text-xl text-grey-darker outline-none hover:text-grey">
                     <i class="fa fa-folder-open"></i> Open
                 </button>
             </div>

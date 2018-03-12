@@ -67,7 +67,7 @@ class Importer {
                         };
 
                         // Images only
-                        const files = Extract.file(file).filter((item) => {
+                        let files = Extract.file(file).filter((item) => {
                             const extension = item.name.split('.').pop();
 
                             if (item.isDirectory) {
@@ -94,6 +94,8 @@ class Importer {
                             // Write the file content into the file's path
                             fs.appendFileSync(file.path, file.data);
                         });
+
+                        files = files.sortBy('path');
 
                         // All the pages
                         data.pages = files;

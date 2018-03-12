@@ -83,6 +83,38 @@ class Collection {
         return mapped;
     }
 
+    sortBy(property) {
+        if (!property) {
+            return this.all();
+        }
+
+        return this.sort((a, b) => {
+            console.log(a, a.path, property);
+            console.log(a[property], b[property], a[property] < b[property]);
+            if (a[property] < b[property]) {
+                return -1;
+            }
+
+            if (a[property] > b[property]) {
+                return 1;
+            }
+
+            return 0;
+        });
+    }
+
+    sort(fn = null) {
+        if (!fn) {
+            return this.all();
+        }
+
+        const items = this.toArray();
+        items.sort(fn);
+
+        const sorted = new Collection(items);
+        return sorted;
+    }
+
     /**
      * Convert the collection to an Array
      * @return Array

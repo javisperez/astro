@@ -12,6 +12,10 @@ $fullHeight: calc(100vh - 70px);
                     &.active {
                         @apply .text-white;
                     }
+
+                    &:first-child {
+                        @apply .ml-1;
+                    }
                 }
 
                 .page-number {
@@ -26,8 +30,10 @@ $fullHeight: calc(100vh - 70px);
 
             .progress-bar {
                 @apply .relative;
-                top: 8px;
+                top: 6px;
                 height: 2px;
+                left: -4px;
+                width: 100vw;
 
                 > div {
                     width: 100%;

@@ -22,7 +22,7 @@ body {
     }
 
     .titlebar {
-        @apply .relative .p-2 .text-sm .text-white .bg-ebony .fixed .pin-t .pin-l .pin-r .flex;
+        @apply .relative .p-1 .text-xs .text-white .bg-ebony .fixed .pin-t .pin-l .pin-r .flex;
 
         &.windows {
             @apply .flex-row-reverse;
@@ -52,16 +52,15 @@ body {
         }
 
         .title {
-            @apply .absolute .pin .text-center .text-grey-dark;
+            @apply .absolute .pin .text-center .text-grey-dark .flex .items-center .justify-center;
 
-            padding-top: 8px;
             pointer-events: none;
         }
     }
 
     .content {
         @apply .relative .overflow-hidden;
-        margin-top: 1.8rem;
-        height: calc(100vh - 29px);
+        margin-top: 1.3rem;
+        height: calc(100vh - 21px);
     }
 }
