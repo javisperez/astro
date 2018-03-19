@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { File } from 'support';
-import { Extractor } from 'extractors';
+import Extractor from './extractor';
 
 const Unrar = require('electron-unrar-js');
 

@@ -11,9 +11,9 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         'minWidth': 800,
         'minHeight': 600,
-        'frame': false,
         'standard-window': false,
         'title': 'Astro',
+        'titleBarStyle': 'hiddenInset'
     });
 
     mainWindow.useContentSize = true;
@@ -21,16 +21,16 @@ function createWindow() {
         nodeIntegrationInWorker: true
     };
 
-    if (process.env.NODE_ENV === 'development') {
-        url = 'http://localhost:3000';
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //     url = 'http://localhost:3000';
+    // }
 
     mainWindow.loadURL(url);
 
-    // if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development') {
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
-    // }
+    }
 
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -58,11 +58,11 @@ function createWindow() {
             ]
         }
     ];
-console.log('process env', process.env.NODE_ENV);
-    // if (process.env.NODE_ENV !== 'development') {
+
+    if (process.env.NODE_ENV === 'production') {
         // const menu = Menu.buildFromTemplate(template);
         // Menu.setApplicationMenu(menu);
-    // }
+    }
 }
 
 app.on('ready', () => {

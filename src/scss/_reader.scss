@@ -1,20 +1,36 @@
-$fullHeight: calc(100vh - 70px);
-
 .window {
     .reader {
+        @apply .flex;
+
         .toolbar {
+            @apply .bg-ebony-darkest .p-1 .text-sm;
+            width: 82px;
+            padding-top: 60px;
+
             .tools {
-                @apply .flex .items-center .flex-wrap;
+                @apply .flex .flex-col .items-center;
 
                 .tool {
-                    @apply .mr-4;
+                    @apply .text-grey-darkest;
 
+                    padding: 0.5rem;
+                    border-radius: 4px;
+                    margin-bottom: 20px;
+                    line-height: 8px;
+
+                    &:hover,
+                    &:active,
+                    &:focus {
+                        outline: none;
+                    }
+
+                    &:hover,
                     &.active {
                         @apply .text-white;
                     }
 
-                    &:first-child {
-                        @apply .ml-1;
+                    &.active {
+                        @apply .bg-ebony;
                     }
                 }
 
@@ -45,37 +61,71 @@ $fullHeight: calc(100vh - 70px);
             }
         }
 
-        .pages {
-            @apply .overflow-hidden .flex;
+        .pages-container {
+            flex: 1;
+            position: relative;
 
-            &.split,
-            &.continuous {
-                @apply .overflow-auto;
-                height: $fullHeight;
+            .pages-info-bar {
+                height: 33px;
+                text-align: center;
+                color: #FFF;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255,255,255,0.2);
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                text-shadow: 0 1px 2px #333;
+                right: 0;
+                transition: background 0.4s;
+                border-top: 1px solid #ddd;
+                z-index: 2;
+
+                &:hover {
+                    background: #000;
+                }
+
+                button {
+                    color: #FFF;
+                    outline: none;
+                }
+            }
+
+            .pages {
+                @apply .overflow-hidden .flex;
+                height: 100vh;
+
+                &.split,
+                &.continuous {
+                    @apply .overflow-auto;
+                    height: 100vh;
+
+                    .reader-page {
+                        overflow: initial;
+                        height: auto;
+                    }
+                }
+
+                &.continuous {
+                    @apply .flex-col;
+                }
 
                 .reader-page {
-                    overflow: initial;
-                    height: auto;
-                }
-            }
+                    @apply .flex-1 .opacity-0 .overflow-auto;
 
-            &.continuous {
-                @apply .flex-col;
-            }
+                    height: 100vh;
+                    transition: opacity 400ms;
+                    padding-bottom: 33px;
 
-            .reader-page {
-                @apply .flex-1 .mx-2 .opacity-0 .overflow-auto;
+                    &.visible {
+                        @apply .opacity-100;
+                    }
 
-                height: $fullHeight;
-                transition: opacity 400ms;
-
-                &.visible {
-                    @apply .opacity-100;
-                }
-
-                > img {
-                    width: 100%;
-                    height: auto;
+                    > img {
+                        width: 100%;
+                        height: auto;
+                    }
                 }
             }
         }

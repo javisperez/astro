@@ -48,7 +48,8 @@ mix
 
     // Copy fonts
     .copyDirectory([
-        './node_modules/@fortawesome/fontawesome-free-webfonts/webfonts'
+        './node_modules/typeface-roboto/files',
+        // './node_modules/@fortawesome/fontawesome-free-webfonts/webfonts'
     ], './dist/fonts')
 
     .js('./src/js/index.js', 'dist/js/app.js')
@@ -73,36 +74,39 @@ mix
         },
         host: 'localhost',
         notify: false,
-    })
-
-    .sourceMaps();
+    });
 
 // Only run PurgeCSS during production builds for faster development builds
 // and so you still have the full set of utilities available during
 // development.
-if (mix.inProduction()) {
-    mix.webpackConfig({
-        plugins: [
-            new PurgecssPlugin({
+// if (mix.inProduction()) {
+//  @todo - this is not working currently, fix it!
+//     mix.webpackConfig({
+//         plugins: [
+//             new PurgecssPlugin({
 
-                // Specify the locations of any files you want to scan for class names.
-                paths: glob.sync([
-                    path.join(__dirname, 'src/**/*.vue'),
-                    path.join(__dirname, 'src/**/*.html')
-                ]),
-                // whitelistPatterns: [/error-msg-.*/, /scale-list-.*/],
-                extractors: [
-                    {
-                        extractor: TailwindExtractor,
+//                 // Specify the locations of any files you want to scan for class names.
+//                 paths: glob.sync([
+//                     path.join(__dirname, 'src/**/*.vue'),
+//                     path.join(__dirname, 'src/**/*.js'),
+//                     path.join(__dirname, 'src/**/*.html')
+//                 ]),
+//                 // whitelistPatterns: [/error-msg-.*/, /scale-list-.*/],
+//                 extractors: [
+//                     {
+//                         extractor: TailwindExtractor,
 
-                        // Specify the file extensions to include when scanning for
-                        // class names.
-                        extensions: ['html', 'js', 'vue']
-                    }
-                ]
-            })
-        ]
-    });
+//                         // Specify the file extensions to include when scanning for
+//                         // class names.
+//                         extensions: ['html', 'js', 'vue']
+//                     }
+//                 ]
+//             })
+//         ]
+//     });
+// }
+if (!mix.inProduction()) {
+    mix.sourceMaps();
 }
 
 // Full API

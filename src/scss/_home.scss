@@ -1,26 +1,27 @@
 .extracting {
-    @apply .bg-ebony .text-center .absolute .pin .text-4xl .text-yellow-dark .flex .justify-center .items-center;
-    z-index: 2;
+    @apply .bg-ebony .text-center .absolute .pin .text-grey-dark .flex .flex-col .justify-center .items-center;
+    z-index: 3;
+
+    .fi {
+        @apply .text-yellow-dark;
+    }
 }
 
 .home {
     @apply .absolute .pin .text-center .flex .justify-center .items-center;
 }
 
-.toolbar {
-    @apply .bg-ebony-darkest .p-1 .text-sm;
+.fi-spin {
+    transform-origin: 50% 50%;
+    animation: rotate 3s infinite linear;
+}
 
-    button {
-        @apply .text-grey-darkest;
+@keyframes rotate {
+    0% {
+        transform: rotate(0);
+    }
 
-        &:hover,
-        &:active,
-        &:focus {
-            outline: none;
-        }
-
-        &:hover {
-            @apply .text-grey;
-        }
+    100% {
+        transform: rotate(359deg);
     }
 }

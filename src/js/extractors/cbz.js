@@ -1,5 +1,5 @@
 import { File } from 'support';
-import { Extractor } from 'extractors';
+import Extractor from './extractor';
 
 const Unzip = require('adm-zip');
 

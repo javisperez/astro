@@ -89,8 +89,6 @@ class Collection {
         }
 
         return this.sort((a, b) => {
-            console.log(a, a.path, property);
-            console.log(a[property], b[property], a[property] < b[property]);
             if (a[property] < b[property]) {
                 return -1;
             }

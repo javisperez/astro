@@ -1,42 +1,93 @@
 {
   "main": "main.js",
+  "name": "Astro",
+  "description": "A comic book reader for cbr/cbz files",
+  "author": {
+    "name": "Javis Pérez",
+    "email": "javisperez@gmail.com"
+  },
+  "repository": "https://github.com/javisperez/astro",
+  "version": "0.0.10",
   "scripts": {
     "dev": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "hot": "NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
     "production": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "electron": "npm run electron:mac",
-    "electron:mac": "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron .",
-    "package": "npm run build; npm run package:osx; npm run package:win; npm run package:linux;",
-    "package:osx": "electron-packager . Astro --platform=darwin --arch=x64 --icon=assets/app.icns --out=package --asar=true --overwrite=force",
-    "package:win": "electron-packager . Astro --platform=win32 --arch=ia32 --icon=assets/app.ico --out=package --asar=true --overwrite=force",
-    "package:linux": "electron-packager . Astro --platform=linux --arch=ia32 --icon=assets/app.ico --out=package --asar=true --overwrite=force"
+    "electron": "NODE_ENV=development npm run electron:mac",
+    "electron:mac": "NODE_ENV=development node_modules/electron/dist/Electron.app/Contents/MacOS/Electron .",
+    "package": "NODE_ENV=production npm run build; npm run package:osx; npm run package:win; npm run package:linux;",
+    "package:osx": "NODE_ENV=production electron-packager . Astro --platform=darwin --arch=x64 --icon=assets/app.icns --out=package --asar=true --overwrite=force",
+    "package:win": "NODE_ENV=production electron-packager . Astro --platform=win32 --arch=ia32 --icon=assets/app.ico --out=package --asar=true --overwrite=force",
+    "package:linux": "NODE_ENV=production electron-packager . Astro --platform=linux --arch=ia32 --icon=assets/app.ico --out=package --asar=true --overwrite=force",
+    "pack": "NODE_ENV=production electron-builder --dir",
+    "build": "NODE_ENV=production npm run production && electron-builder -mwl",
+    "build:mac": "NODE_ENV=production npm run production && electron-builder --mac",
+    "build:win": "NODE_ENV=production npm run production && electron-builder --win",
+    "build:linux": "NODE_ENV=production npm run production && electron-builder --linux"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free-webfonts": "^1.0.4",
     "adm-zip": "^0.4.7",
-    "babel-loader": "^7.1.3",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "electron-packager": "^11.1.0",
     "electron-unrar-js": "^1.0.1",
-    "eslint": "^4.15.0",
-    "eslint-config-vue": "^2.0.2",
-    "eslint-plugin-vue": "^4.2.0",
+    "feather-icons": "^4.7.0",
     "glob-all": "^3.1.0",
     "laravel-mix": "^1.7.2",
     "md5-file": "^3.2.3",
-    "purgecss-webpack-plugin": "^0.19.0",
+    "typeface-roboto": "^0.0.54",
     "vue": "^2.5.13"
   },
   "devDependencies": {
+    "babel-loader": "^7.1.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "browser-sync": "^2.23.5",
     "browser-sync-webpack-plugin": "^1.2.0",
     "electron": "1.7.11",
+    "electron-builder": "^20.5.1",
+    "electron-packager": "^11.1.0",
+    "eslint": "^4.15.0",
+    "eslint-config-vue": "^2.0.2",
+    "eslint-plugin-vue": "^4.2.0",
+    "purgecss-webpack-plugin": "^0.19.0",
     "tailwindcss": "^0.4.0"
   },
   "babel": {
     "plugins": [
       "transform-object-rest-spread"
     ]
+  },
+  "build": {
+    "appId": "astro.comic.book.reader",
+    "directories": {
+      "output": "build"
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "cbr",
+          "cbz"
+        ],
+        "name": "Comic book file",
+        "description": "Comic book file"
+      }
+    ],
+    "files": [
+      "*.js",
+      "dist",
+      "node_modules"
+    ],
+    "protocols": [
+      {
+        "name": "Astro comic reader",
+        "schemes": [
+          "astro"
+        ]
+      }
+    ],
+    "mac": {
+      "category": "your.app.category.type"
+    },
+    "nsis": {
+      "perMachine": true
+    }
   }
 }

@@ -55,14 +55,6 @@ export default {
                 });
         },
 
-        closeWindow() {
-            win.close();
-        },
-
-        minimizeWindow() {
-            win.minimize();
-        },
-
         maximizeWindow() {
           if (!win.isMaximized()) {
             win.maximize();
@@ -70,12 +62,6 @@ export default {
             win.unmaximize();
           }
         },
-    },
-
-    computed: {
-        process() {
-            return process;
-        }
     }
 };
 </script>
@@ -83,41 +69,29 @@ export default {
 <template>
     <div class="app window">
         <!-- Title bar -->
-        <div class="titlebar draggable" :class="{'windows': process.platform === 'win32'}" @dblclick="maximizeWindow()">
-            <!-- Close -->
-            <span class="titlebar-button close undraggable" @click="closeWindow()">
-                <i class="fa fa-times-circle"></i>
-            </span>
-            <!-- Minimize -->
-            <span class="titlebar-button minimize undraggable" @click="minimizeWindow()">
-                <i class="fa fa-minus-circle"></i>
-            </span>
-            <!-- Maximize -->
-            <span class="titlebar-button maximize undraggable" @click="maximizeWindow()">
-                <i class="fa fa-plus-circle"></i>
-            </span>
-
-            <span class="title">
+        <div class="titlebar draggable" @dblclick="maximizeWindow()">
+            <!-- <span class="title">
                 <span v-if="title">{{ title }} -&nbsp;</span>Astro
-            </span>
+            </span> -->
         </div>
 
         <!-- App content -->
         <div class="content">
             <!-- Default state -->
             <div class="home" v-if="!files.length">
-                <button @click="openFile" class="btn text-xl text-grey-darker outline-none hover:text-grey">
-                    <i class="fa fa-folder-open"></i> Open
+                <button @click="openFile" class="flex items-center btn text-xl text-grey-darker outline-none hover:text-grey">
+                    <fi-folder class="mr-2"></fi-folder> Start Here
                 </button>
-            </div>
-
-            <!-- Loading -->
-            <div class="extracting" v-show="isExtracting">
-                <i class="fa fa-spin fa-cog"></i>
             </div>
 
             <!-- Reader -->
             <reader :files="files" :metadata="comic" @open="openFile" :current-page="currentPage" v-if="files.length"></reader>
+        </div>
+
+        <!-- Loading -->
+        <div class="extracting" v-show="isExtracting">
+            <fi-loader class="fi-spin"></fi-loader>
+            <p>Working...</p>
         </div>
     </div>
 </template>

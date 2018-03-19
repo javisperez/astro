@@ -1,4 +1,5 @@
-import { Cbz, Cbr } from 'extractors';
+import Cbz from './cbz';
+import Cbr from './cbr';
 
 export default
 class Extract {

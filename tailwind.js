@@ -194,7 +194,8 @@ module.exports = {
             'Liberation Mono',
             'Courier New',
             'monospace',
-        ]
+        ],
+        'body': ['Roboto']
     },
 
 

@@ -1,6 +1,9 @@
 import Vue from 'vue';
+import { FeatherIcons } from 'support';
 import app from './app.vue';
 import { webFrame } from 'electron';
+
+Vue.use(FeatherIcons);
 
 // Disable pinch zoom
 webFrame.setVisualZoomLevelLimits(1, 1);

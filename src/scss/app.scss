@@ -29,17 +29,18 @@
     * @import "components/forms";
     */
 
+    @import "./fonts";
     @import "./components/buttons";
 
-    $fa-font-path: "../fonts";
-    @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fontawesome.scss";
-    @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-regular.scss";
-    @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-solid.scss";
-    @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-brands.scss";
+    // $fa-font-path: "../fonts";
+    // @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fontawesome.scss";
+    // @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-regular.scss";
+    // @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-solid.scss";
+    // @import "node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-brands.scss";
 
-    @import './_window.scss';
-    @import './_home.scss';
-    @import './_reader.scss';
+    @import './window';
+    @import './home';
+    @import './reader';
 
     /**
     * This injects all of Tailwind's utility classes, generated based on your
