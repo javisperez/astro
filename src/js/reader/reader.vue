@@ -27,7 +27,7 @@ export default {
     mounted() {
         this.$refs.pages.addEventListener('scroll', () => {
             this.setCurrentPageFromScroll();
-        })
+        });
     },
 
     methods: {
@@ -161,7 +161,7 @@ export default {
             }
 
             return false;
-        }
+        },
     },
 
     watch: {
@@ -179,6 +179,10 @@ export default {
                 }
 
                 this.$nextTick(() => {
+                    if (!pages || !pages[this.currentIndex]) {
+                        return;
+                    }
+
                     const targetScroll = pages[this.currentIndex].offsetTop;
                     this.$refs.pages.scrollTop = targetScroll + offsetScroll;
                 });
@@ -226,20 +230,6 @@ export default {
                 @click="toggleTool('zoomOut')">
                 <fi-zoom-out></fi-zoom-out>
             </button>
-
-            <!-- Continuous mode -->
-            <button class="tool mt-auto" title="Continuous mode" :class="{active: currentMode === 'continuous'}"
-                @click="toggleCurrentMode('continuous')">
-                <fi-film></fi-film>
-            </button>
-
-            <!-- Split mode -->
-            <button class="tool" title="Split mode" :class="{active: currentMode === 'split'}"
-                @click="toggleCurrentMode('split')">
-                <fi-book-open></fi-book-open>
-            </button>
-
-            <!-- Pagination -->
         </div>
 
         <!-- Current progress -->
@@ -258,7 +248,7 @@ export default {
 
             <!-- Current page / Number of pages -->
             <span class="tool text-sm page-number" title="Page number">
-                {{ currentIndex + 1 }} / {{ files.length }}
+                {{ currentIndex + 1 }} <span v-show="currentMode === 'split' && currentIndex < files.length - 1"> - {{ currentIndex + 2 }}</span> <span class="text-grey-darker">/ {{ files.length }}</span>
             </span>
 
             <!-- Next -->
@@ -273,16 +263,30 @@ export default {
         </div>
 
         <!-- Thumbnails -->
-        <transition name="thumbnails-list">
-            <div class="thumbnails-list whitespace-no-wrap" :class="{'expanded': isThumbnailExpanded}">
-                <ul class="list-reset">
-                    <li class="inline-block px-1" v-for="(image, $index) in files" :key="$index"
-                        v-if="thumbnailInRange($index)" :class="{'active': currentIndex === $index}">
-                        <img :src="image" height="60" />
-                    </li>
-                </ul>
+        <div class="thumbnails-list whitespace-no-wrap flex" :class="{'expanded': isThumbnailExpanded}">
+            <ul class="list-reset">
+                <li class="inline-block px-1" v-for="(image, $index) in files" :key="$index"
+                    v-if="thumbnailInRange($index)" :class="{
+                        'active': (currentIndex === $index) || (currentIndex + 1 === $index && currentMode === 'split')
+                    }">
+                    <img :src="image" height="60" />
+                </li>
+            </ul>
+
+            <div class="reading-modes flex flex-col justify-between ml-2">
+                <!-- Continuous mode -->
+                <button class="tool text-grey-dark hover:text-grey" title="Continuous mode" :class="{active: currentMode === 'continuous'}"
+                    @click="toggleCurrentMode('continuous')">
+                    <fi-film></fi-film>
+                </button>
+
+                <!-- Split mode -->
+                <button class="tool text-grey-dark hover:text-grey" title="Split mode" :class="{active: currentMode === 'split'}"
+                    @click="toggleCurrentMode('split')">
+                    <fi-book-open></fi-book-open>
+                </button>
             </div>
-        </transition>
+        </div>
 
         <div class="pages" ref="pages" :class="[currentMode]">
             <page v-for="(image, $index) in files" :ref="'page'+$index" :key="$index"

@@ -56,6 +56,7 @@ export default {
         },
 
         maximizeWindow() {
+            console.log('doble click');
           if (!win.isMaximized()) {
             win.maximize();
           } else {
@@ -91,7 +92,7 @@ export default {
         <!-- Loading -->
         <div class="extracting" v-show="isExtracting">
             <fi-loader class="fi-spin"></fi-loader>
-            <p>Working...</p>
+            <p class="mt-2">Working...</p>
         </div>
     </div>
 </template>

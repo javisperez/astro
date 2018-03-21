@@ -9,7 +9,16 @@ export default {
     data() {
         return {
             isLoaded: false,
+            src: null,
         };
+    },
+
+    beforeMount() {
+        const img = new Image();
+        img.onload = () => {
+            this.src = img.src
+        };
+        img.src = this.path;
     },
 
     mounted() {
@@ -24,6 +33,6 @@ export default {
 
 <template>
     <div class="reader-page" :class="{ visible: isLoaded }">
-        <img :src="path">
+        <img :src="src">
     </div>
 </template>
