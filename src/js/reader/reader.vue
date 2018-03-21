@@ -20,6 +20,7 @@ export default {
             currentMode: localStorage.getItem(`${this.metadata.key}-current-mode`) || 'default',
             currentTool: null,
             isTransitioning: false,
+            isThumbnailExpanded: false,
         };
     },
 
@@ -50,36 +51,6 @@ export default {
             } else {
                 this.currentTool = tool;
             }
-
-            // if (tool.indexOf('readingMode') === 0) {
-            //     if (this.isTransitioning) {
-            //         return;
-            //     }
-
-            //     this.isTransitioning = true;
-
-            //     // Save it
-            //     this.saveHistory();
-
-            //     // And now flip it!
-            //     const page = this.$refs[`page${this.currentIndex}`][0].$el;
-            //     const first = page.getBoundingClientRect();
-
-            //     this.$nextTick(() => {
-            //         const last = page.getBoundingClientRect();
-
-            //         // Animate the transition
-            //         this.flip(
-            //             page,
-            //             `scale(${first.width / last.width})`,
-            //             `scale(1)`,
-            //             () => {
-            //                 this.isTransitioning = false;
-            //             },
-            //             400
-            //         );
-            //     });
-            // }
         },
 
         toggleCurrentMode(mode = 'default') {
@@ -118,6 +89,10 @@ export default {
                     400
                 );
             });
+        },
+
+        toggleThumbnails() {
+            this.isThumbnailExpanded = !this.isThumbnailExpanded;
         },
 
         setCurrentPageFromScroll() {
@@ -178,6 +153,14 @@ export default {
         saveHistory() {
             localStorage.setItem(`${this.metadata.key}-current-index`, this.currentIndex);
             localStorage.setItem(`${this.metadata.key}-current-mode`, this.currentMode);
+        },
+
+        thumbnailInRange(index) {
+            if (index > this.currentIndex - 5 && index < this.currentIndex + 5) {
+                return true;
+            }
+
+            return false;
         }
     },
 
@@ -256,14 +239,7 @@ export default {
                 <fi-book-open></fi-book-open>
             </button>
 
-            <!-- Divider -->
-            <hr>
-
             <!-- Pagination -->
-            <div class="page-number">
-                {{ currentIndex + 1 }}<br>
-                <span class="text-grey-darker text-sm">/ {{ files.length }}</span>
-            </div>
         </div>
 
         <!-- Current progress -->
@@ -274,26 +250,43 @@ export default {
 
     <!-- The pages -->
     <div class="pages-container">
-        <div class="pages-info-bar">
+        <div class="pages-info-bar" :class="{'expanded': isThumbnailExpanded}">
             <!-- Previous -->
-            <button class="tool" title="Previous page" @click="previousImage()">
+            <button class="tool" style="height: 24px;" title="Previous page" @click="previousImage()">
                 <fi-chevron-left></fi-chevron-left>
             </button>
 
+            <!-- Current page / Number of pages -->
+            <span class="tool text-sm page-number" title="Page number">
+                {{ currentIndex + 1 }} / {{ files.length }}
+            </span>
+
             <!-- Next -->
-            <button class="tool" title="Next page" @click="nextImage()">
+            <button class="tool" style="height: 24px;" title="Next page" @click="nextImage()">
                 <fi-chevron-right></fi-chevron-right>
             </button>
 
-            <!-- Comic name -->
-            <span class="title text-sm">
-                {{ metadata.title || ''}}
-            </span>
+            <button class="tool" style="height: 24px;" title="More options" @click="toggleThumbnails()">
+                <fi-chevron-up v-if="!isThumbnailExpanded"></fi-chevron-up>
+                <fi-chevron-down v-if="isThumbnailExpanded"></fi-chevron-down>
+            </button>
         </div>
+
+        <!-- Thumbnails -->
+        <transition name="thumbnails-list">
+            <div class="thumbnails-list whitespace-no-wrap" :class="{'expanded': isThumbnailExpanded}">
+                <ul class="list-reset">
+                    <li class="inline-block px-1" v-for="(image, $index) in files" :key="$index"
+                        v-if="thumbnailInRange($index)" :class="{'active': currentIndex === $index}">
+                        <img :src="image" height="60" />
+                    </li>
+                </ul>
+            </div>
+        </transition>
 
         <div class="pages" ref="pages" :class="[currentMode]">
             <page v-for="(image, $index) in files" :ref="'page'+$index" :key="$index"
-                v-show="isVisible($index)" :path="image"></page>
+                v-if="isVisible($index)" :path="image"></page>
         </div>
     </div>
   </div>
