@@ -245,7 +245,7 @@ export default {
             </button>
 
             <!-- Continuous mode -->
-            <button class="tool" title="Continuous mode" :class="{active: currentMode === 'continuous'}"
+            <button class="tool mt-auto" title="Continuous mode" :class="{active: currentMode === 'continuous'}"
                 @click="toggleCurrentMode('continuous')">
                 <fi-film></fi-film>
             </button>
@@ -255,6 +255,15 @@ export default {
                 @click="toggleCurrentMode('split')">
                 <fi-book-open></fi-book-open>
             </button>
+
+            <!-- Divider -->
+            <hr>
+
+            <!-- Pagination -->
+            <div class="page-number">
+                {{ currentIndex + 1 }}<br>
+                <span class="text-grey-darker text-sm">/ {{ files.length }}</span>
+            </div>
         </div>
 
         <!-- Current progress -->
@@ -275,9 +284,6 @@ export default {
             <button class="tool" title="Next page" @click="nextImage()">
                 <fi-chevron-right></fi-chevron-right>
             </button>
-
-            <!-- Current page / Number of pages -->
-            <span class="tool text-sm page-number" title="Page number">{{ currentIndex + 1 }} / {{ files.length }}</span>
 
             <!-- Comic name -->
             <span class="title text-sm">
