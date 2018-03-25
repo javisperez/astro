@@ -16,12 +16,33 @@ export default {
 
     data() {
         return {
+            pages: [],
             currentIndex: Number(localStorage.getItem(`${this.metadata.key}-current-index`)) || 0,
             currentMode: localStorage.getItem(`${this.metadata.key}-current-mode`) || 'default',
             currentTool: null,
             isTransitioning: false,
             isThumbnailExpanded: false,
+            currentBrightness: 100,
+            zoomLevel: {
+                x: 0,
+                y: 0,
+                level: 1,
+            }
         };
+    },
+
+    beforeMount() {
+        this.files.forEach(file => {
+            this.pages.push({
+                file,
+                brightness: 100,
+                zoom: {
+                    x: 0,
+                    y: 0,
+                    level: 1,
+                }
+            });
+        });
     },
 
     mounted() {
@@ -162,6 +183,34 @@ export default {
 
             return false;
         },
+
+        setBrightness(brightness = 100) {
+            this.currentBrightness = Math.max(0, Math.min(200, brightness));
+        },
+
+        onPageClick(data) {
+            const { $event } = data;
+            const currentPage = this.pages[this.currentIndex];
+
+            if (this.currentTool === 'zoomIn' || this.currentTool === 'zoomOut') {
+                const delta = {
+                    zoomIn: 0.2,
+                    zoomOut: -0.2,
+                };
+
+                const cursor = { x: $event.clientX - 82, y: $event.clientY };
+                const currentZoom = currentPage.zoom.level;
+
+                let x = (cursor.x - currentPage.zoom.x) / currentZoom;
+                let y = (cursor.y - currentPage.zoom.y) / currentZoom;
+
+                currentPage.zoom.level += delta[this.currentTool];
+                currentPage.zoom.level = Math.min(3, Math.max(0.5, currentPage.zoom.level));
+
+                currentPage.zoom.x = cursor.x - (x * currentPage.zoom.level);
+                currentPage.zoom.y = cursor.y - (y * currentPage.zoom.level);
+            }
+        },
     },
 
     watch: {
@@ -191,9 +240,9 @@ export default {
     },
 
     computed: {
-        progress() {
-            return (this.currentIndex + 1) / this.files.length;
-        },
+        // progress() {
+        //     return (this.currentIndex + 1) / this.files.length;
+        // },
 
         $pages() {
             return this.$refs.pages.querySelectorAll('.reader-page');
@@ -209,9 +258,9 @@ export default {
     <div class="toolbar">
         <div class="tools">
             <!-- Open a file -->
-            <button class="tool" @click="open()" title="Open a file">
+            <!-- <button class="tool" @click="open()" title="Open a file">
                 <fi-folder></fi-folder>
-            </button>
+            </button> -->
 
             <!-- Move -->
             <button class="tool" :class="{'active': currentTool === 'move'}" title="Move"
@@ -229,6 +278,16 @@ export default {
             <button class="tool" :class="{'active': currentTool === 'zoomOut'}" title="Zoom Out"
                 @click="toggleTool('zoomOut')">
                 <fi-zoom-out></fi-zoom-out>
+            </button>
+
+            <!-- Sunrise (brightness up) -->
+            <button class="tool push-btn" title="Brightness up" @click="setBrightness(currentBrightness + 10)">
+                <fi-sunrise></fi-sunrise>
+            </button>
+
+            <!-- Sunset (brightness down) -->
+            <button class="tool push-btn" title="Brightness down" @click="setBrightness(currentBrightness - 10)">
+                <fi-sunset></fi-sunset>
             </button>
         </div>
 
@@ -264,7 +323,7 @@ export default {
 
         <!-- Thumbnails -->
         <div class="thumbnails-list whitespace-no-wrap flex" :class="{'expanded': isThumbnailExpanded}">
-            <ul class="list-reset">
+            <ul class="list-reset overflow-x-hidden">
                 <li class="inline-block px-1" v-for="(image, $index) in files" :key="$index"
                     v-if="thumbnailInRange($index)" :class="{
                         'active': (currentIndex === $index) || (currentIndex + 1 === $index && currentMode === 'split')
@@ -288,9 +347,9 @@ export default {
             </div>
         </div>
 
-        <div class="pages" ref="pages" :class="[currentMode]">
-            <page v-for="(image, $index) in files" :ref="'page'+$index" :key="$index"
-                v-if="isVisible($index)" :path="image"></page>
+        <div class="pages" ref="pages" :class="currentMode">
+            <page v-for="(page, $index) in pages" :ref="'page'+$index" :key="$index"
+                v-if="isVisible($index)" :data="page" @click="onPageClick"></page>
         </div>
     </div>
   </div>

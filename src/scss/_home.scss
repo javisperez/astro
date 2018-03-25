@@ -8,7 +8,32 @@
 }
 
 .home {
-    @apply .absolute .pin .text-center .flex .justify-center .items-center;
+    padding: 4rem;
+
+    .branding-row {
+        .branding {
+            font-size: 42px;
+            letter-spacing: 4px;
+
+            .logo {
+                @apply .bg-transparent .bg-center .bg-no-repeat .rounded-lg .mr-8 .inline-block;
+                width: 100px;
+                height: 100px;
+                background-image: url(../images/logo-128.png);
+                background-size: 98px;
+            }
+        }
+    }
+
+    .recents-list {
+        li:hover {
+            @apply .text-grey;
+
+            > span {
+                @apply .text-yellow;
+            }
+        }
+    }
 }
 
 .fi-spin {

@@ -44,12 +44,14 @@ mix
 
     .setPublicPath('dist')
 
+    .copyDirectory('./assets/images', 'dist/images')
+
     .copy('./src/index.html', 'dist/index.html')
 
     // Copy fonts
     .copyDirectory([
         './node_modules/typeface-roboto/files',
-        // './node_modules/@fortawesome/fontawesome-free-webfonts/webfonts'
+        './assets/fonts',
     ], './dist/fonts')
 
     .js('./src/js/index.js', 'dist/js/app.js')
