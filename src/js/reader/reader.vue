@@ -162,6 +162,10 @@ export default {
 
         setBrightness(brightness = 100) {
             this.currentBrightness = Math.max(0, Math.min(200, brightness));
+
+            this.pages.forEach(page => {
+                page.brightness = this.currentBrightness;
+            })
         },
 
         setZoom(delta = 0) {

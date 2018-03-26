@@ -81,8 +81,6 @@ export default {
                 this.$el.style.display = 'block';
             }
 
-            console.log(output);
-
             return output;
         }
     }
