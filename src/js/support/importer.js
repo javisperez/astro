@@ -92,7 +92,7 @@ class Importer {
                             // Where is this file being extracted to?
                             file.path = path.join(tmp, file.name.split('/').pop());
                             // Write the file content into the file's path
-                            fs.appendFileSync(file.path, file.data);
+                            fs.appendFileSync(file.path, file.data, { flag: 'w' });
                         });
 
                         files = files.sortBy('path');
