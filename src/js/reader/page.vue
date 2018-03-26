@@ -40,7 +40,7 @@ export default {
 
     computed: {
         style() {
-            const keys = ['filter', 'transform', 'transformOrigin'];
+            const keys = ['filter', 'transform'];
 
             let styles = {};
 
@@ -55,7 +55,6 @@ export default {
             }
 
             if (this.data.zoom.level !== 1) {
-                // styles.transform.translate3D = `${this.data.zoom.x}px, ${this.data.zoom.y}px, 0`;
                 styles.transform.scale = this.data.zoom.level;
             }
 
@@ -69,14 +68,18 @@ export default {
                         output += `${property}(${properties[property]})`;
                     });
                 } else {
-                    console.log(properties);
                     output += properties;
                 }
 
-                console.log(output);
-
                 output += '; ';
             });
+
+            if (this.$el) {
+                // Force the browser to "redraw" the scrollbars
+                this.$el.style.display = 'none';
+                this.$el.offsetHeight;
+                this.$el.style.display = 'block';
+            }
 
             console.log(output);
 

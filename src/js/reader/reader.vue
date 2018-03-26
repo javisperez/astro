@@ -116,31 +116,7 @@ export default {
             this.isThumbnailExpanded = !this.isThumbnailExpanded;
         },
 
-        setCurrentPageFromScroll() {
-            if (this.currentMode !== 'continuous') {
-                return;
-            }
-
-            this.$pages.forEach((page, i) => {
-                if (!this.isOnViewport(page)) {
-                    return;
-                }
-
-                this.currentIndex = i;
-            });
-        },
-
-        isOnViewport(el) {
-            const rect = el.getBoundingClientRect();
-
-            return rect.top > 0 && rect.top <= (window.innerHeight / 2);
-        },
-
         isVisible(index) {
-            if (this.currentMode === 'continuous') {
-                return true;
-            }
-
             if (index === this.currentIndex) {
                 return true;
             }
@@ -188,54 +164,39 @@ export default {
             this.currentBrightness = Math.max(0, Math.min(200, brightness));
         },
 
-        onPageClick(data) {
-            const { $event } = data;
+        setZoom(delta = 0) {
             const currentPage = this.pages[this.currentIndex];
+            const zoom = currentPage.zoom.level + delta;
 
-            if (this.currentTool === 'zoomIn' || this.currentTool === 'zoomOut') {
-                const delta = {
-                    zoomIn: 0.2,
-                    zoomOut: -0.2,
-                };
+            currentPage.zoom.level = Math.min(3, Math.max(0.5, zoom.toFixed(2)));
+        }
 
-                const cursor = { x: $event.clientX - 82, y: $event.clientY };
-                const currentZoom = currentPage.zoom.level;
+        // @todo - implement zoom to point functionality
+        // onPageClick(data) {
+        //     const { $event } = data;
+        //     const currentPage = this.pages[this.currentIndex];
 
-                let x = (cursor.x - currentPage.zoom.x) / currentZoom;
-                let y = (cursor.y - currentPage.zoom.y) / currentZoom;
+        //     if (this.currentTool === 'zoomIn' || this.currentTool === 'zoomOut') {
+        //         const delta = {
+        //             zoomIn: 0.2,
+        //             zoomOut: -0.2,
+        //         };
 
-                currentPage.zoom.level += delta[this.currentTool];
-                currentPage.zoom.level = Math.min(3, Math.max(0.5, currentPage.zoom.level));
+        //         const cursor = { x: $event.clientX - 82, y: $event.clientY };
+        //         const currentZoom = currentPage.zoom.level;
 
-                currentPage.zoom.x = cursor.x - (x * currentPage.zoom.level);
-                currentPage.zoom.y = cursor.y - (y * currentPage.zoom.level);
-            }
-        },
+        //         currentPage.zoom.level += delta[this.currentTool];
+        //         currentPage.zoom.level = Math.min(3, Math.max(0.5, currentPage.zoom.level.toFixed(2)));
+
+        //         currentPage.zoom.x = cursor.x * (currentPage.zoom.level - 1); // cursor.x - (x * currentPage.zoom.level);
+        //         currentPage.zoom.y = cursor.y * (currentPage.zoom.level - 1); // cursor.y - (y * currentPage.zoom.level);
+        //     }
+        // },
     },
 
     watch: {
         currentPage(value) {
             this.currentIndex = value;
-        },
-
-        currentMode(value, previous) {
-            if (value === 'continuous') {
-                const pages = this.$pages;
-                let offsetScroll = 0; // toolbar height
-
-                if (previous === 'default') {
-                    offsetScroll += pages[this.currentIndex].scrollTop;
-                }
-
-                this.$nextTick(() => {
-                    if (!pages || !pages[this.currentIndex]) {
-                        return;
-                    }
-
-                    const targetScroll = pages[this.currentIndex].offsetTop;
-                    this.$refs.pages.scrollTop = targetScroll + offsetScroll;
-                });
-            }
         }
     },
 
@@ -257,11 +218,6 @@ export default {
     <!-- toolbar -->
     <div class="toolbar">
         <div class="tools">
-            <!-- Open a file -->
-            <!-- <button class="tool" @click="open()" title="Open a file">
-                <fi-folder></fi-folder>
-            </button> -->
-
             <!-- Move -->
             <button class="tool" :class="{'active': currentTool === 'move'}" title="Move"
                 @click="toggleTool('move')">
@@ -269,14 +225,12 @@ export default {
             </button>
 
             <!-- Zoom in -->
-            <button class="tool" :class="{'active': currentTool === 'zoomIn'}" title="Zoom In"
-                @click="toggleTool('zoomIn')">
+            <button class="tool" title="Zoom In" @click="setZoom(0.2)">
                 <fi-zoom-in></fi-zoom-in>
             </button>
 
             <!-- Zoom out -->
-            <button class="tool" :class="{'active': currentTool === 'zoomOut'}" title="Zoom Out"
-                @click="toggleTool('zoomOut')">
+            <button class="tool" title="Zoom Out" @click="setZoom(-0.2)">
                 <fi-zoom-out></fi-zoom-out>
             </button>
 
@@ -290,11 +244,6 @@ export default {
                 <fi-sunset></fi-sunset>
             </button>
         </div>
-
-        <!-- Current progress -->
-        <!-- <div class="progress-bar">
-            <div class="bg-blue" :style="`transform: scaleX(${progress})`"></div>
-        </div> -->
     </div>
 
     <!-- The pages -->
@@ -333,12 +282,6 @@ export default {
             </ul>
 
             <div class="reading-modes flex flex-col justify-between ml-2">
-                <!-- Continuous mode -->
-                <button class="tool text-grey-dark hover:text-grey" title="Continuous mode" :class="{active: currentMode === 'continuous'}"
-                    @click="toggleCurrentMode('continuous')">
-                    <fi-film></fi-film>
-                </button>
-
                 <!-- Split mode -->
                 <button class="tool text-grey-dark hover:text-grey" title="Split mode" :class="{active: currentMode === 'split'}"
                     @click="toggleCurrentMode('split')">
@@ -349,7 +292,7 @@ export default {
 
         <div class="pages" ref="pages" :class="currentMode">
             <page v-for="(page, $index) in pages" :ref="'page'+$index" :key="$index"
-                v-if="isVisible($index)" :data="page" @click="onPageClick"></page>
+                v-if="isVisible($index)" :data="page"></page>
         </div>
     </div>
   </div>
