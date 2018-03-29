@@ -1,5 +1,5 @@
 {
-  "main": "main.js",
+  "main": "src/main/index.js",
   "name": "Astro",
   "description": "A comic book reader for cbr/cbz files",
   "author": {
@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
+    "dexie": "3.0.0-alpha.2",
     "electron-unrar-js": "^1.0.1",
     "feather-icons": "^4.7.0",
     "glob-all": "^3.1.0",

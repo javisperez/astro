@@ -30,10 +30,10 @@ mix
         resolve: {
             modules: [
                 path.resolve('./node_modules'),
-                path.resolve('./src/js')
+                path.resolve('./src/renderer/js')
             ],
             alias: {
-                '@': path.resolve('./src/scss'),
+                '@': path.resolve('./src/renderer/scss'),
                 'vue$': 'vue/dist/vue.esm.js'
             }
         },
@@ -46,7 +46,7 @@ mix
 
     .copyDirectory('./assets/images', 'dist/images')
 
-    .copy('./src/index.html', 'dist/index.html')
+    .copy('./src/renderer/index.html', 'dist/index.html')
 
     // Copy fonts
     .copyDirectory([
@@ -54,9 +54,9 @@ mix
         './assets/fonts',
     ], './dist/fonts')
 
-    .js('./src/js/index.js', 'dist/js/app.js')
+    .js('./src/renderer/js/index.js', 'dist/js/app.js')
 
-    .sass('./src/scss/app.scss', 'dist/css/app.css')
+    .sass('./src/renderer/scss/app.scss', 'dist/css/app.css')
 
     .options({
         processCssUrls: false,
@@ -66,9 +66,9 @@ mix
     .browserSync({
         proxy: false,
         files: [
-            './src/**/.js',
-            './src/**/.vue',
-            './src/**/.html',
+            './src/renderer/**/.js',
+            './src/renderer/**/.vue',
+            './src/renderer/**/.html',
         ],
         open: false,
         server: {

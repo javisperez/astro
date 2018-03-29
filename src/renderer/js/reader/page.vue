@@ -40,7 +40,7 @@ export default {
 
     computed: {
         style() {
-            const keys = ['filter', 'transform'];
+            const keys = ['filter', 'transform', 'transformOrigin'];
 
             let styles = {};
 
@@ -56,8 +56,13 @@ export default {
 
             if (this.data.zoom.level !== 1) {
                 styles.transform.scale = this.data.zoom.level;
+
+                if (this.data.zoom.level < 1) {
+                    styles.transformOrigin = '50% 0';
+                }
             }
 
+            // Parse the styles
             keys.forEach(key => {
                 const properties = styles[key];
 
@@ -75,10 +80,17 @@ export default {
             });
 
             if (this.$el) {
+                const img = this.$el.querySelector('img');
                 // Force the browser to "redraw" the scrollbars
-                this.$el.style.display = 'none';
-                this.$el.offsetHeight;
-                this.$el.style.display = 'block';
+                // After the animation end
+                img.addEventListener('transitionend', _ => {
+                    if (this.data.zoom.level >= 1) {
+                        img.style.transformOrigin = '0 0';
+                    }
+                    this.$el.style.display = 'none';
+                    this.$el.offsetHeight;
+                    this.$el.style.display = 'block';
+                }, false);
             }
 
             return output;

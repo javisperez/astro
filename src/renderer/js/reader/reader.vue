@@ -1,6 +1,7 @@
 <script>
 import fs from 'fs';
 import page from './page.vue';
+import { ipcRenderer } from 'electron';
 
 export default {
     name: 'reader',
@@ -43,12 +44,12 @@ export default {
                 }
             });
         });
+
+        ipcRenderer.send('menu:show', 'tools');
     },
 
-    mounted() {
-        this.$refs.pages.addEventListener('scroll', () => {
-            this.setCurrentPageFromScroll();
-        });
+    beforeDestroy() {
+        ipcRenderer.send('menu:hide', 'tools');
     },
 
     methods: {
