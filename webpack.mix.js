@@ -81,7 +81,9 @@ mix
 // Only run PurgeCSS during production builds for faster development builds
 // and so you still have the full set of utilities available during
 // development.
-// if (mix.inProduction()) {
+if (mix.inProduction()) {
+    // Copy icons to build directory
+    mix.copyDirectory('./assets/icons', 'build');
 //  @todo - this is not working currently, fix it!
 //     mix.webpackConfig({
 //         plugins: [
@@ -106,8 +108,7 @@ mix
 //             })
 //         ]
 //     });
-// }
-if (!mix.inProduction()) {
+} else {
     mix.sourceMaps();
 }
 
