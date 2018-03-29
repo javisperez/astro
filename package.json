@@ -67,11 +67,13 @@
           "cbz"
         ],
         "name": "Comic book file",
-        "description": "Comic book file"
+        "description": "Comic book file",
+        "icon": "./assets/icons/Astro.icns",
+        "role": "Viewer"
       }
     ],
     "files": [
-      "*.js",
+      "src/main/*.js",
       "dist",
       "node_modules"
     ],
