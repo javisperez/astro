@@ -1,9 +1,19 @@
 <script>
+import { shell } from 'electron';
+
 export default {
     name: 'astro-home',
 
     props: {
         value: Array,
+    },
+
+    directives: {
+        href(el, binding) {
+            el.addEventListener('click', () => {
+                shell.openExternal(binding.value);
+            });
+        }
     },
 
     methods: {
@@ -49,12 +59,12 @@ export default {
             </h3>
             <ul class="list-reset">
                 <li class="mb-6">
-                    <a target="_blank" class="text-lg text-yellow-lighter hover:text-yellow no-underline" href="https://www.github.com/javisperez/astro/issues">
+                    <a class="cursor-pointer text-lg text-yellow-lighter hover:text-yellow no-underline" v-href="'https://www.github.com/javisperez/astro/issues'">
                         Open a new issue
                     </a>
                 </li>
                 <li class="mb-6">
-                    <a target="_blank" class="text-lg text-yellow-lighter hover:text-yellow no-underline" href="https://www.github.com/javisperez/astro">
+                    <a class="cursor-pointer text-lg text-yellow-lighter hover:text-yellow no-underline" v-href="'https://www.github.com/javisperez/astro'">
                         Want to Contribute?
                     </a>
                 </li>
