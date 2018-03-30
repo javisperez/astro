@@ -18,33 +18,16 @@ export default {
     data() {
         return {
             pages: [],
-            currentIndex: Number(localStorage.getItem(`${this.metadata.key}-current-index`)) || 0,
-            currentMode: localStorage.getItem(`${this.metadata.key}-current-mode`) || 'default',
+            currentIndex: 0,
+            currentMode: 'default',
             currentTool: null,
             isTransitioning: false,
             isThumbnailExpanded: false,
             currentBrightness: 100,
-            zoomLevel: {
-                x: 0,
-                y: 0,
-                level: 1,
-            }
         };
     },
 
     beforeMount() {
-        this.files.forEach(file => {
-            this.pages.push({
-                file,
-                brightness: 100,
-                zoom: {
-                    x: 0,
-                    y: 0,
-                    level: 1,
-                }
-            });
-        });
-
         // Show the tools menu
         ipcRenderer.send('menu:show', 'tools');
 
@@ -79,10 +62,6 @@ export default {
     },
 
     methods: {
-        open() {
-            this.$emit('open');
-        },
-
         nextImage() {
             this.currentIndex = Math.min(this.files.length - 1, this.currentIndex + 1);
             this.saveHistory();
@@ -204,17 +183,31 @@ export default {
     },
 
     watch: {
-        currentPage(value) {
-            this.currentIndex = value;
-        }
-    },
+        files: {
+            immediate: true,
+            deep: true,
+            handler(value, old) {
+                const pages = [];
 
-    computed: {
-        $pages() {
-            return this.$refs.pages.querySelectorAll('.reader-page');
-        }
+                this.currentIndex = Number(localStorage.getItem(`${this.metadata.key}-current-index`)) || 0,
+                this.currentMode = localStorage.getItem(`${this.metadata.key}-current-mode`) || 'default',
+
+                value.forEach(file => {
+                    pages.push({
+                        file,
+                        brightness: 100,
+                        zoom: {
+                            x: 0,
+                            y: 0,
+                            level: 1,
+                        }
+                    });
+                });
+
+                this.pages = pages;
+            }
+        },
     }
-
 }
 </script>
 

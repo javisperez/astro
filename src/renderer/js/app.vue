@@ -1,7 +1,7 @@
 <script>
 import { reader } from 'reader';
 import { welcome, loadingScreen } from 'welcome';
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import { Importer } from 'support';
 import { Extract } from 'extractors';
 
@@ -25,6 +25,12 @@ export default {
             title: '',
             currentPage: 0,
         };
+    },
+
+    beforeMount() {
+        ipcRenderer.on('file:open', _ => {
+            this.openFile();
+        });
     },
 
     methods: {
@@ -71,15 +77,15 @@ export default {
         <div class="titlebar draggable" @dblclick="maximizeWindow()"></div>
 
         <!-- App content -->
-        <div class="content">
+        <div class="content" v-if="!isExtracting">
             <!-- Welcome screen -->
             <welcome @open="openFile" v-if="!files.length"></welcome>
 
             <!-- Reader -->
-            <reader :files="files" :metadata="comic" @open="openFile" v-else></reader>
+            <reader :files="files" :metadata="comic" v-else></reader>
         </div>
 
         <!-- Loading -->
-        <loading-screen v-if="isExtracting"></loading-screen>
+        <loading-screen v-else></loading-screen>
     </div>
 </template>
