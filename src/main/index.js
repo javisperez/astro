@@ -10,10 +10,13 @@ const main = {
 let win = null;
 
 app.on('ready', () => {
+    // Create the browser window
     win = window.create();
 
-    menu.build();
+    // Create the app menu
+    menu.build(win);
 
+    // Listen events from the renderer
     ipc.listen();
 
     win.once('ready-to-show', () => {

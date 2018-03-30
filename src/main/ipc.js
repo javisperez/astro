@@ -1,4 +1,4 @@
-const { ipcMain, Menu } = require('electron');
+const { ipcMain } = require('electron');
 const menu = require('./menu');
 
 module.exports = {

@@ -45,7 +45,33 @@ export default {
             });
         });
 
+        // Show the tools menu
         ipcRenderer.send('menu:show', 'tools');
+
+        // Listen for the tools menu click
+        ipcRenderer.on('tools:tool', (e, tool) => {
+            switch(tool) {
+                case 'zoom-in':
+                    this.setZoom(0.2);
+                    break;
+
+                case 'zoom-out':
+                    this.setZoom(-0.2);
+                    break;
+
+                case 'brightness-up':
+                    this.setBrightness(this.currentBrightness + 10);
+                    break;
+
+                case 'brightness-down':
+                    this.setBrightness(this.currentBrightness - 10);
+                    break;
+
+                default:
+                    this.toggleTool(tool);
+                    break;
+            }
+        });
     },
 
     beforeDestroy() {
@@ -174,29 +200,7 @@ export default {
             const zoom = currentPage.zoom.level + delta;
 
             currentPage.zoom.level = Math.min(3, Math.max(0.5, zoom.toFixed(2)));
-        }
-
-        // @todo - implement zoom to point functionality
-        // onPageClick(data) {
-        //     const { $event } = data;
-        //     const currentPage = this.pages[this.currentIndex];
-
-        //     if (this.currentTool === 'zoomIn' || this.currentTool === 'zoomOut') {
-        //         const delta = {
-        //             zoomIn: 0.2,
-        //             zoomOut: -0.2,
-        //         };
-
-        //         const cursor = { x: $event.clientX - 82, y: $event.clientY };
-        //         const currentZoom = currentPage.zoom.level;
-
-        //         currentPage.zoom.level += delta[this.currentTool];
-        //         currentPage.zoom.level = Math.min(3, Math.max(0.5, currentPage.zoom.level.toFixed(2)));
-
-        //         currentPage.zoom.x = cursor.x * (currentPage.zoom.level - 1); // cursor.x - (x * currentPage.zoom.level);
-        //         currentPage.zoom.y = cursor.y * (currentPage.zoom.level - 1); // cursor.y - (y * currentPage.zoom.level);
-        //     }
-        // },
+        },
     },
 
     watch: {
@@ -206,10 +210,6 @@ export default {
     },
 
     computed: {
-        // progress() {
-        //     return (this.currentIndex + 1) / this.files.length;
-        // },
-
         $pages() {
             return this.$refs.pages.querySelectorAll('.reader-page');
         }
@@ -224,8 +224,8 @@ export default {
     <div class="toolbar">
         <div class="tools">
             <!-- Move -->
-            <button class="tool" :class="{'active': currentTool === 'move'}" title="Move"
-                @click="toggleTool('move')">
+            <button class="tool" :class="{'active': currentTool === 'drag'}" title="Move"
+                @click="toggleTool('drag')">
                 <fi-move></fi-move>
             </button>
 

@@ -1,13 +1,18 @@
-const { app, Menu } = require('electron');
+const { app, Menu, shell } = require('electron');
 
-// Set the file menu options
+let win = null;
+
 const template = [
+    // File
     {
         id: 'file',
         label: 'File',
         submenu: [
             {
-                label: 'Open file'
+                label: 'Open file',
+                click() {
+                    win.webContents.send('file:open');
+                },
             },
             { type: 'separator' },
             {
@@ -24,39 +29,60 @@ const template = [
         ]
     },
 
+    // Tools
     {
         id: 'tools',
         label: 'Tools',
         visible: false,
         submenu: [
             {
-                label: 'Drag'
+                label: 'Drag',
+                click() {
+                    console.log(win.webContents);
+                    win.webContents.send('tools:tool', 'drag');
+                }
             },
 
             {
-                label: 'Zoom In'
+                label: 'Zoom In',
+                click() {
+                    win.webContents.send('tools:tool', 'zoom-in');
+                }
             },
 
             {
-                label: 'Zoom Out'
+                label: 'Zoom Out',
+                click() {
+                    win.webContents.send('tools:tool', 'zoom-out');
+                }
             },
 
             {
-                label: 'Brightness up'
+                label: 'Brightness up',
+                click() {
+                    win.webContents.send('tools:tool', 'brightness-up');
+                }
             },
 
             {
-                label: 'Brightness down'
+                label: 'Brightness down',
+                click() {
+                    win.webContents.send('tools:tool', 'brightness-down');
+                }
             },
         ]
     },
 
+    // Bookmarks
     {
         id: 'bookmarks',
         label: 'Bookmarks',
         submenu: [
             {
-                label: 'Add to bookmark'
+                label: 'Add to bookmark',
+                click() {
+                    win.webContents.send('bookmars:add');
+                }
             },
             { type: 'separator' },
             {
@@ -74,6 +100,7 @@ const template = [
         ]
     },
 
+    // Window
     {
         id: 'window',
         role: 'window',
@@ -83,14 +110,22 @@ const template = [
         ]
     },
 
+    // Help
     {
         id: 'help',
         role: 'help',
         submenu: [
             {
                 label: 'Learn More',
-                click () {
-                    require('electron').shell.openExternal('https://www.github.com/javisperez/astro');
+                click() {
+                    shell.openExternal('https://www.github.com/javisperez/astro');
+                }
+            },
+
+            {
+                label: 'Troubles?',
+                click() {
+                    shell.openExternal('https://www.github.com/javisperez/astro');
                 }
             },
 
@@ -134,8 +169,6 @@ if (process.env.NODE_ENV === 'development') {
     });
 }
 
-let menu = null;
-
 class AppMenu {
     constructor(template) {
         this.template = template;
@@ -155,8 +188,12 @@ class AppMenu {
         this.build();
     }
 
-    build() {
-        menu = Menu.buildFromTemplate(this.template);
+    build(window = win) {
+        if (window) {
+            win = window;
+        }
+
+        const menu = Menu.buildFromTemplate(this.template);
         Menu.setApplicationMenu(menu);
 
         return menu;

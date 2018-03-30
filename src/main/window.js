@@ -19,5 +19,9 @@ module.exports = {
 
     show() {
         window.show();
+    },
+
+    get() {
+        return window;
     }
 };
