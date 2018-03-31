@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import { remote } from 'electron';
 import { Extract } from 'extractors';
+import { Collection, File } from 'support';
 
 const mkdirp = require('mkdirp');
 const md5File = require('md5-file');
@@ -61,13 +62,13 @@ class Importer {
             const basename = path.basename(file, path.extname(file));
             const fileKey = md5File.sync(file);
             const tmp = path.join(os.tmpdir(), 'astro', 'cache', fileKey);
+            const isCached = fs.existsSync(tmp);
 
-            if (!fs.existsSync(tmp)) {
+            if (!isCached) {
                 mkdirp.sync(tmp);
             }
 
             // We need this fs.readFile to make it async
-            // @todo find a better way to do this async?
             fs.readFile(file, (err) => {
                 // Something's not right
                 if (err) {
@@ -84,16 +85,15 @@ class Importer {
                     }
                 };
 
-                // Images only
-                let files = Extract.file(file).filter((item) => {
-                    const extension = item.name.split('.').pop();
+                let files = [];
 
-                    if (item.isDirectory) {
-                        return false;
-                    }
-
-                    return /jpe?g|png|bmp|tiff/gi.test(extension);
-                });
+                if (isCached) {
+                    // If we already have a cache folder, use it
+                    files = this.fromCache(tmp);
+                } else {
+                    // Otherwise, read it from the file
+                    files = this.fromFile(file);
+                }
 
                 // Empty file? nothing else to do
                 if (!files.length) {
@@ -101,17 +101,21 @@ class Importer {
                     return;
                 }
 
+                // Populate the cache files, if doesn't exists
+                if (!isCached) {
+                    files.forEach((file) => {
+                        // Where is this file being extracted to?
+                        file.path = path.join(tmp, file.name.split('/').pop());
+                        // Write the file content into the file's path
+                        fs.appendFileSync(file.path, file.data, { flag: 'w' });
+                    });
+                }
+
                 // Number of pages this file has
                 data.info.pages = files.length;
+
                 // In what folder is extracted?
                 data.info.folder = tmp;
-
-                files.forEach((file) => {
-                    // Where is this file being extracted to?
-                    file.path = path.join(tmp, file.name.split('/').pop());
-                    // Write the file content into the file's path
-                    fs.appendFileSync(file.path, file.data, { flag: 'w' });
-                });
 
                 files = files.sortBy('path');
 
@@ -124,6 +128,47 @@ class Importer {
                 // Resolve it
                 resolve(data);
             });
+        });
+    }
+
+    /**
+     * Import from a cached version
+     *
+     * Note: This method is supposed to be used as a helper for the `import` method
+     * Note: Files returned from cache doesn't have a `data` property, as is not need it
+     *       we prefer to save that CPU and memory
+     * @param {String} name - The cache folder name
+     */
+    fromCache(name) {
+        const collected = fs.readdirSync(name)
+            .map(f => new File({
+                name: f,
+                size: fs.statSync(path.join(name, f)).size,
+                isDirectory: false,
+            }))
+            .map(f => {
+                f.path = path.join(name, f.name);
+                return f;
+            });
+
+        return new Collection(collected);
+    }
+
+    /**
+     * Import from a given file path.
+     *
+     * Note: This method is supposed to be used as a helper for the `import` method
+     * @param {String} file - The file path
+     */
+    fromFile(file) {
+        return Extract.file(file).filter((item) => {
+            const extension = item.name.split('.').pop();
+
+            if (item.isDirectory) {
+                return false;
+            }
+
+            return /jpe?g|png|bmp|tiff/gi.test(extension);
         });
     }
 }
