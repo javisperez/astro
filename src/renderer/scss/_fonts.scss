@@ -3,7 +3,7 @@
     font-family: 'BigNoodleTitling';
     font-style: normal;
     font-weight: normal;
-    font-display: swap;
+    font-display: auto;
     src: url('../fonts/BigNoodleTitling.woff2') format('woff2'),
         url('../fonts/BigNoodleTitling.woff') format('woff');
 }
@@ -13,7 +13,7 @@
     font-family: 'BigNoodleTitling';
     font-style: italic;
     font-weight: normal;
-    font-display: swap;
+    font-display: auto;
     src: url('../fonts/BigNoodleTitling-Oblique.woff2') format('woff2'),
         url('../fonts/BigNoodleTitling-Oblique.woff') format('woff');
 }
@@ -22,7 +22,7 @@
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
-    font-display: swap;
+    font-display: auto;
     font-weight: 100;
     src:
       local('Roboto Thin '),
@@ -35,7 +35,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: italic;
-    font-display: swap;
+    font-display: auto;
     font-weight: 100;
     src:
       local('Roboto Thin italic'),
@@ -48,7 +48,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: normal;
-    font-display: swap;
+    font-display: auto;
     font-weight: 300;
     src:
       local('Roboto Light '),
@@ -61,7 +61,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: italic;
-    font-display: swap;
+    font-display: auto;
     font-weight: 300;
     src:
       local('Roboto Light italic'),
@@ -74,7 +74,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: normal;
-    font-display: swap;
+    font-display: auto;
     font-weight: 400;
     src:
       local('Roboto Regular '),
@@ -87,7 +87,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: italic;
-    font-display: swap;
+    font-display: auto;
     font-weight: 400;
     src:
       local('Roboto Regular italic'),
@@ -100,7 +100,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: normal;
-    font-display: swap;
+    font-display: auto;
     font-weight: 500;
     src:
       local('Roboto Medium '),
@@ -113,7 +113,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: italic;
-    font-display: swap;
+    font-display: auto;
     font-weight: 500;
     src:
       local('Roboto Medium italic'),
@@ -126,7 +126,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: normal;
-    font-display: swap;
+    font-display: auto;
     font-weight: 700;
     src:
       local('Roboto Bold '),
@@ -139,7 +139,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: italic;
-    font-display: swap;
+    font-display: auto;
     font-weight: 700;
     src:
       local('Roboto Bold italic'),
@@ -152,7 +152,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: normal;
-    font-display: swap;
+    font-display: auto;
     font-weight: 900;
     src:
       local('Roboto Black '),
@@ -165,7 +165,7 @@
   @font-face {
     font-family: 'Roboto';
     font-style: italic;
-    font-display: swap;
+    font-display: auto;
     font-weight: 900;
     src:
       local('Roboto Black italic'),
