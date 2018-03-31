@@ -10,6 +10,7 @@ const template = [
         submenu: [
             {
                 label: 'Open file',
+                accelerator: 'CmdOrCtrl+O',
                 click() {
                     win.webContents.send('file:open');
                 },
@@ -37,6 +38,7 @@ const template = [
         submenu: [
             {
                 label: 'Drag',
+                accelerator: 'CmdOrCtrl+Shift+D',
                 click() {
                     console.log(win.webContents);
                     win.webContents.send('tools:tool', 'drag');
@@ -45,6 +47,7 @@ const template = [
 
             {
                 label: 'Zoom In',
+                accelerator: 'CmdOrCtrl+Shift\\+',
                 click() {
                     win.webContents.send('tools:tool', 'zoom-in');
                 }
@@ -52,6 +55,7 @@ const template = [
 
             {
                 label: 'Zoom Out',
+                accelerator: 'CmdOrCtrl+Shift+-',
                 click() {
                     win.webContents.send('tools:tool', 'zoom-out');
                 }
@@ -59,6 +63,7 @@ const template = [
 
             {
                 label: 'Brightness up',
+                accelerator: 'CmdOrCtrl+Shift+Up',
                 click() {
                     win.webContents.send('tools:tool', 'brightness-up');
                 }
@@ -66,6 +71,7 @@ const template = [
 
             {
                 label: 'Brightness down',
+                accelerator: 'CmdOrCtrl+Shift+Down',
                 click() {
                     win.webContents.send('tools:tool', 'brightness-down');
                 }
@@ -80,6 +86,7 @@ const template = [
         submenu: [
             {
                 label: 'Add to bookmark',
+                accelerator: 'CmdOrCtrl+B',
                 click() {
                     win.webContents.send('bookmars:add');
                 }
@@ -103,7 +110,7 @@ const template = [
     // Window
     {
         id: 'window',
-        role: 'window',
+        label: 'Window',
         submenu: [
             { role: 'minimize' },
             { role: 'close' },
