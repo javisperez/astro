@@ -85,13 +85,17 @@ const template = [
         label: 'Bookmarks',
         submenu: [
             {
+                id: 'add-to-bookmark',
                 label: 'Add to bookmark',
                 accelerator: 'CmdOrCtrl+B',
                 click() {
                     win.webContents.send('bookmars:add');
                 }
             },
-            { type: 'separator' },
+            {
+                id: 'add-to-bookmark-separator',
+                type: 'separator'
+            },
             {
                 label: '~/Desktop/Batman - The return.cbz'
             },

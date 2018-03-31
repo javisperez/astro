@@ -3,7 +3,7 @@ import os from 'os';
 import path from 'path';
 import { remote } from 'electron';
 import { Extract } from 'extractors';
-import { Collection, File } from 'support';
+import { Collection, File, db } from 'support';
 
 const mkdirp = require('mkdirp');
 const md5File = require('md5-file');
@@ -124,6 +124,13 @@ class Importer {
 
                 // Unique key per file
                 data.key = fileKey;
+
+                // Save it on the recent list
+                db.recents.insertReplace({
+                    title: basename,
+                    path: file,
+                    update_at: Date.now()
+                });
 
                 // Resolve it
                 resolve(data);
