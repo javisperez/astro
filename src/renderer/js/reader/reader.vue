@@ -217,7 +217,7 @@ export default {
     <div class="toolbar">
         <div class="tools">
             <!-- Move -->
-            <button class="tool" :class="{'active': currentTool === 'drag'}" title="Move"
+            <button class="tool" :class="{'active': currentTool === 'drag'}" title="Drag"
                 @click="toggleTool('drag')">
                 <fi-move></fi-move>
             </button>
