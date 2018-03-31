@@ -49,13 +49,17 @@ export default {
                         key: data.key,
                     };
                     this.files = data.pages.map(p => p.path).toArray();
+
+                    // Let the progress bar finish
+                    setTimeout(_ => {
+                        this.isExtracting = false;
+                    }, 1000);
                 })
                 .catch((error) => {
                     if (error) {
                         alert(error);
                     }
-                })
-                .then(_ => {
+
                     this.isExtracting = false;
                 });
         },
@@ -86,6 +90,6 @@ export default {
         </div>
 
         <!-- Loading -->
-        <loading-screen v-else></loading-screen>
+        <loading-screen :done="!!files.length" v-else></loading-screen>
     </div>
 </template>
