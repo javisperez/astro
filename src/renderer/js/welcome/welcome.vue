@@ -10,14 +10,14 @@ export default {
     },
 
     created() {
-        db.recents.orderBy('updated_at').reverse().limit(15).toArray().then(recents => {
-            this.recents = recents;
+        db.recent.orderBy('updated_at').reverse().limit(15).toArray().then(recent => {
+            this.recent = recent;
         });
     },
 
     data() {
         return {
-            recents: [],
+            recent: [],
         };
     },
 
@@ -88,9 +88,9 @@ export default {
             <h3 class="text-left text-xl font-light mb-6 flex items-center">
                 <fi-folder class="mr-2"></fi-folder> Recently Open
             </h3>
-            <ul class="list-reset recents-list cursor-pointer">
-                <li class="text-grey-darkest text-lg mb-4" v-for="recent in recents" :key="recent.id">
-                    <span class="text-yellow-lighter mr-6">{{ recent.title }}</span> {{ recent.path }}
+            <ul class="list-reset recent-list cursor-pointer">
+                <li class="text-grey-darkest text-lg mb-4" v-for="file in recent" :key="file.id">
+                    <span class="text-yellow-lighter mr-6">{{ file.title }}</span> {{ file.path }}
                 </li>
                 <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile">Another file?</li>
             </ul>

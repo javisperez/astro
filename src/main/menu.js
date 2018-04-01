@@ -1,4 +1,5 @@
 const { app, Menu, shell } = require('electron');
+const path = require('path');
 
 let win = null;
 
@@ -17,15 +18,16 @@ const template = [
             },
             { type: 'separator' },
             {
+                id: 'recent',
                 label: 'Recent files',
-                submenu: [
-                    {
-                        label: '~/Desktop/Batman - The Return.cbz'
-                    },
-                    {
-                        label: '~/Desktop/Batman - The Return.cbz'
-                    },
-                ]
+                submenu: []
+            },
+            { type: 'separator' },
+            {
+                label: 'Clear recent files',
+                click() {
+                    console.log('clear recent files');
+                }
             }
         ]
     },
@@ -40,14 +42,13 @@ const template = [
                 label: 'Drag',
                 accelerator: 'CmdOrCtrl+Shift+D',
                 click() {
-                    console.log(win.webContents);
                     win.webContents.send('tools:tool', 'drag');
                 }
             },
 
             {
                 label: 'Zoom In',
-                accelerator: 'CmdOrCtrl+Shift\\+',
+                accelerator: 'CmdOrCtrl+Shift+\\+',
                 click() {
                     win.webContents.send('tools:tool', 'zoom-in');
                 }
@@ -238,8 +239,25 @@ class AppMenu {
         this.build();
     }
 
+    setRecentFiles(recent) {
+        const menu = this._getMenuItemById(this.template, 'recent');
+
+        menu.submenu = [];
+
+        recent.forEach(r => {
+            menu.submenu.push({
+                label: path.join(r.path, r.title),
+                click() {
+                    console.log(`${r.title} clicked`);
+                }
+            });
+        });
+
+        this.build();
+    }
+
     build(window = win) {
-        if (window) {
+        if (window !== win) {
             win = window;
         }
 

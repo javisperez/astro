@@ -127,7 +127,7 @@ class Importer {
                 data.key = fileKey;
 
                 // Save/update it on the recent's list
-                db.recents.insertReplace({
+                db.recent.insertReplace({
                     title: basename + extension,
                     path: file,
                     updated_at: Date.now()

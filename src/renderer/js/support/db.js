@@ -5,7 +5,7 @@ const db = new Dexie('astro');
 
 // Create the tables
 db.version(1).stores({
-    recents: '++id, title, &path, updated_at',
+    recent: '++id, title, &path, updated_at',
     bookmarks: '++id, title, path, updated_at'
 });
 

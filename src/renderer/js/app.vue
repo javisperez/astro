@@ -2,11 +2,15 @@
 import { reader } from 'reader';
 import { welcome, loadingScreen } from 'welcome';
 import { remote, ipcRenderer } from 'electron';
-import { Importer } from 'support';
+import { Importer, db } from 'support';
 import { Extract } from 'extractors';
 
 const win = remote.getCurrentWindow();
 
+// Tell the Menu the list of recent files
+db.recent.orderBy('updated_at').reverse().limit(15).toArray().then(recent => {
+    ipcRenderer.send('recent:update', recent);
+});
 // Main app
 export default {
     name: 'astro',
