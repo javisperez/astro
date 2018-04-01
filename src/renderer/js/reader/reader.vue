@@ -2,6 +2,7 @@
 import fs from 'fs';
 import page from './page.vue';
 import { ipcRenderer } from 'electron';
+import { db } from 'support';
 
 export default {
     name: 'reader',

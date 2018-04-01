@@ -11,6 +11,12 @@ const win = remote.getCurrentWindow();
 db.recent.orderBy('updated_at').reverse().limit(15).toArray().then(recent => {
     ipcRenderer.send('recent:update', recent);
 });
+
+// And the bookmarks
+db.bookmarks.toArray().then(bookmarks => {
+    ipcRenderer.send('bookmarks:update', bookmarks);
+});
+
 // Main app
 export default {
     name: 'astro',
@@ -35,6 +41,24 @@ export default {
         ipcRenderer.on('file:open', _ => {
             this.openFile();
         });
+
+        ipcRenderer.on('bookmarks:add', _ => {
+            if (!this.comic.title) {
+                return;
+            }
+
+            db.bookmarks.add({
+                title: this.comic.title,
+                path: this.comic.file,
+                updated_at: Date.now(),
+            });
+
+            // Update the menu's bookmarks
+            db.bookmarks.toArray().then(bookmarks => {
+                ipcRenderer.send('bookmarks:update', bookmarks);
+            });
+        });
+
     },
 
     methods: {

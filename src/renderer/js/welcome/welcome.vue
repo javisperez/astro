@@ -10,14 +10,21 @@ export default {
     },
 
     created() {
+        // Get the recent files
         db.recent.orderBy('updated_at').reverse().limit(15).toArray().then(recent => {
             this.recent = recent;
+        });
+
+        // And the bookmarks
+        db.bookmarks.toArray().then(bookmarks => {
+            this.bookmarks = bookmarks;
         });
     },
 
     data() {
         return {
             recent: [],
+            bookmarks: [],
             search: '',
         };
     },
@@ -47,6 +54,14 @@ export default {
             }
 
             return this.recent.filter(r => r.path.toLowerCase().includes(this.search.toLowerCase()))
+        },
+
+        filteredBookmarks() {
+            if (!this.search) {
+                return this.bookmarks;
+            }
+
+            return this.bookmarks.filter(r => r.path.toLowerCase().includes(this.search.toLowerCase()))
         }
     }
 }
@@ -116,8 +131,8 @@ export default {
                 <fi-bookmark class="mr-2"></fi-bookmark> Bookmarks
             </h3>
             <ul class="list-reset bookmarks cursor-pointer">
-                <li class="text-yellow-lighter hover:text-yellow text-lg mb-4" v-for="i in 10">
-                    Captain america - Civil War
+                <li class="text-yellow-lighter hover:text-yellow text-lg mb-4" v-for="bookmark in filteredBookmarks" :key="bookmark.id">
+                    {{ bookmark.title }}
                 </li>
             </ul>
         </div>

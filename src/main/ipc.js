@@ -15,6 +15,10 @@ module.exports = {
         ipcMain.on('recent:update', (e, recent) => {
             menu.setRecentFiles(recent);
         });
+
+        ipcMain.on('bookmarks:update', (e, bookmarks) => {
+            menu.setBookmarks(bookmarks);
+        });
     }
 };
 

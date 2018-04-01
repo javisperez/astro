@@ -92,26 +92,14 @@ const template = [
                 visible: false,
                 accelerator: 'CmdOrCtrl+B',
                 click() {
-                    win.webContents.send('bookmars:add');
+                    win.webContents.send('bookmarks:add');
                 }
             },
             {
                 id: 'add-to-bookmark:separator',
                 visible: false,
                 type: 'separator'
-            },
-            {
-                label: '~/Desktop/Batman - The return.cbz'
-            },
-            {
-                label: '~/Desktop/Batman - The return.cbz'
-            },
-            {
-                label: '~/Desktop/Batman - The return.cbz'
-            },
-            {
-                label: '~/Desktop/Batman - The return.cbz'
-            },
+            }
         ]
     },
 
@@ -247,7 +235,7 @@ class AppMenu {
 
         recent.forEach(r => {
             menu.submenu.push({
-                label: path.join(r.path, r.title),
+                label: r.path,
                 click() {
                     console.log(`${r.title} clicked`);
                 }
@@ -256,6 +244,26 @@ class AppMenu {
 
         // Append the `clear recent files` menu item
         menu.submenu = menu.submenu.concat(clear);
+        this.build();
+    }
+
+    setBookmarks(bookmarks) {
+        const menu = this._getMenuItemById(this.template, 'bookmarks');
+        const add = menu.submenu.slice(0, 2);
+        menu.submenu = [];
+
+        // Add the `add to bookmarks` option (and it's separator)
+        menu.submenu = menu.submenu.concat(add);
+
+        bookmarks.forEach(bookmark => {
+            menu.submenu.push({
+                label: bookmark.title,
+                click() {
+                    console.log(`${bookmark.path} clicked`);
+                }
+            });
+        });
+
         this.build();
     }
 
