@@ -20,15 +20,16 @@ const template = [
             {
                 id: 'recent',
                 label: 'Recent files',
-                submenu: []
+                submenu: [
+                    { type: 'separator' },
+                    {
+                        label: 'Clear recent files',
+                        click() {
+                            console.log('clear recent files');
+                        }
+                    }
+                ]
             },
-            { type: 'separator' },
-            {
-                label: 'Clear recent files',
-                click() {
-                    console.log('clear recent files');
-                }
-            }
         ]
     },
 
@@ -241,7 +242,7 @@ class AppMenu {
 
     setRecentFiles(recent) {
         const menu = this._getMenuItemById(this.template, 'recent');
-
+        const clear = menu.submenu.slice(menu.submenu.length - 2);
         menu.submenu = [];
 
         recent.forEach(r => {
@@ -253,6 +254,8 @@ class AppMenu {
             });
         });
 
+        // Append the `clear recent files` menu item
+        menu.submenu = menu.submenu.concat(clear);
         this.build();
     }
 
