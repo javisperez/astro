@@ -23,6 +23,8 @@ body {
 
     .titlebar {
         @apply .absolute .pin-t .pin-l .pin-r .h-10;
+
+        z-index: 1;
     }
 
     .content {

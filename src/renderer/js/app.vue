@@ -82,7 +82,7 @@ export default {
 <template>
     <div class="app window">
         <!-- Invisible and draggable title bar -->
-        <div class="titlebar draggable" @dblclick="maximizeWindow()"></div>
+        <div class="titlebar draggable" :class="{'bg-black': !files.length}" @dblclick="maximizeWindow()"></div>
 
         <!-- App content -->
         <div class="content" v-if="!isExtracting">
