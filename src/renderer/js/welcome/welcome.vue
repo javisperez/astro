@@ -1,6 +1,6 @@
 <script>
 import { shell, remote } from 'electron';
-import { db } from 'support';
+import { db, Helper } from 'support';
 
 export default {
     name: 'astro-home',
@@ -32,6 +32,10 @@ export default {
     methods: {
         openFile() {
             this.$emit('open');
+        },
+
+        getShortPath(file) {
+            return Helper.getShortPath(file.path.replace(file.title, '')).slice(0, -1);
         },
     }
 }
@@ -90,7 +94,7 @@ export default {
             </h3>
             <ul class="list-reset recent-list cursor-pointer">
                 <li class="text-grey-darkest text-lg mb-4" v-for="file in recent" :key="file.id">
-                    <span class="text-yellow-lighter mr-6">{{ file.title }}</span> {{ file.path }}
+                    <span class="text-yellow-lighter mr-6">{{ file.title }}</span> {{ getShortPath(file) }}
                 </li>
                 <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile">Another file?</li>
             </ul>
