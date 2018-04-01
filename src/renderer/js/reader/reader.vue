@@ -31,7 +31,7 @@ export default {
         // Show the tools menu
         ipcRenderer.send('menu:show', 'tools');
         ipcRenderer.send('menu:show', 'add-to-bookmark');
-        ipcRenderer.send('menu:show', 'add-to-bookmark-separator');
+        ipcRenderer.send('menu:show', 'add-to-bookmark:separator');
 
         // Listen for the tools menu click
         ipcRenderer.on('tools:tool', (e, tool) => {

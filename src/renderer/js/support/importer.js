@@ -59,7 +59,8 @@ class Importer {
                 return;
             }
 
-            const basename = path.basename(file, path.extname(file));
+            const extension = path.extname(file);
+            const basename = path.basename(file, extension);
             const fileKey = md5File.sync(file);
             const tmp = path.join(os.tmpdir(), 'astro', 'cache', fileKey);
             const isCached = fs.existsSync(tmp);
@@ -125,11 +126,11 @@ class Importer {
                 // Unique key per file
                 data.key = fileKey;
 
-                // Save it on the recent list
+                // Save/update it on the recent's list
                 db.recents.insertReplace({
-                    title: basename,
+                    title: basename + extension,
                     path: file,
-                    update_at: Date.now()
+                    updated_at: Date.now()
                 });
 
                 // Resolve it

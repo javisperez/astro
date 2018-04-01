@@ -87,13 +87,15 @@ const template = [
             {
                 id: 'add-to-bookmark',
                 label: 'Add to bookmark',
+                visible: false,
                 accelerator: 'CmdOrCtrl+B',
                 click() {
                     win.webContents.send('bookmars:add');
                 }
             },
             {
-                id: 'add-to-bookmark-separator',
+                id: 'add-to-bookmark:separator',
+                visible: false,
                 type: 'separator'
             },
             {
@@ -183,18 +185,55 @@ if (process.env.NODE_ENV === 'development') {
 class AppMenu {
     constructor(template) {
         this.template = template;
+        this.instance = null;
     }
+    /**
+     * For some reason getMenuItemById doesn't work to me
+     *
+     * @memberof AppMenu
+     */
+    _getMenuItemById(items, id) {
+        const index = items.findIndex(item => item.id === id);
+
+        let menu = null;
+
+        if (index > -1) {
+            return items[index];
+        }
+
+        items.forEach((subItem) => {
+            if (menu) {
+                return;
+            }
+
+            if (subItem.submenu) {
+                menu = this._getMenuItemById(subItem.submenu, id);
+            }
+        });
+
+        return menu || false;
+    };
 
     hide(menuItemId) {
-        const index = this.template.findIndex(m => m.id === menuItemId);
-        this.template[index].visible = false;
+        const menu = this._getMenuItemById(this.template, menuItemId);
+
+        if (!menu) {
+            return;
+        }
+
+        menu.visible = false;
 
         this.build();
     }
 
     show(menuItemId) {
-        const index = this.template.findIndex(m => m.id === menuItemId);
-        this.template[index].visible = true;
+        const menu = this._getMenuItemById(this.template, menuItemId);
+
+        if (!menu) {
+            return;
+        }
+
+        menu.visible = true;
 
         this.build();
     }
@@ -205,7 +244,10 @@ class AppMenu {
         }
 
         const menu = Menu.buildFromTemplate(this.template);
+
         Menu.setApplicationMenu(menu);
+
+        this.instance = menu;
 
         return menu;
     }

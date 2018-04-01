@@ -1,11 +1,24 @@
 <script>
-import { shell } from 'electron';
+import { shell, remote } from 'electron';
+import { db } from 'support';
 
 export default {
     name: 'astro-home',
 
     props: {
         value: Array,
+    },
+
+    created() {
+        db.recents.orderBy('updated_at').reverse().limit(15).toArray().then(recents => {
+            this.recents = recents;
+        });
+    },
+
+    data() {
+        return {
+            recents: [],
+        };
     },
 
     directives: {
@@ -76,8 +89,8 @@ export default {
                 <fi-folder class="mr-2"></fi-folder> Recently Open
             </h3>
             <ul class="list-reset recents-list cursor-pointer">
-                <li class="text-grey-darkest text-lg mb-4" v-for="i in 10">
-                    <span class="text-yellow-lighter mr-6">Batman - The return.cbz</span> ~/Desktop
+                <li class="text-grey-darkest text-lg mb-4" v-for="recent in recents" :key="recent.id">
+                    <span class="text-yellow-lighter mr-6">{{ recent.title }}</span> {{ recent.path }}
                 </li>
                 <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile">Another file?</li>
             </ul>
