@@ -237,7 +237,7 @@ class AppMenu {
             menu.submenu.push({
                 label: r.path,
                 click() {
-                    console.log(`${r.title} clicked`);
+                    win.webContents.send('file:open', r.path);
                 }
             });
         });
@@ -259,7 +259,7 @@ class AppMenu {
             menu.submenu.push({
                 label: bookmark.title,
                 click() {
-                    console.log(`${bookmark.path} clicked`);
+                    win.webContents.send('file:open', bookmark.path);
                 }
             });
         });

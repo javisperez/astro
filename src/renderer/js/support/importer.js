@@ -52,7 +52,9 @@ class Importer {
      * Import a given file path
      * @param {string} file - The path to the file to open
      */
-    import(file = null) {
+    static import(file = null) {
+        const self = new Importer();
+
         return new Promise((resolve, reject) => {
             if (!file) {
                 reject(`Tried to import a file with invalid path ${file}`);
@@ -90,10 +92,10 @@ class Importer {
 
                 if (isCached) {
                     // If we already have a cache folder, use it
-                    files = this.fromCache(tmp);
+                    files = self.fromCache(tmp);
                 } else {
                     // Otherwise, read it from the file
-                    files = this.fromFile(file);
+                    files = self.fromFile(file);
                 }
 
                 // Empty file? nothing else to do

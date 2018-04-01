@@ -38,8 +38,8 @@ export default {
     },
 
     methods: {
-        openFile() {
-            this.$emit('open');
+        openFile(file = null) {
+            this.$emit('open', file);
         },
 
         getShortPath(file) {
@@ -92,7 +92,7 @@ export default {
             <h3 class="text-left text-xl font-light mb-6 flex items-center">
                 <fi-file class="mr-2"></fi-file> Start here
             </h3>
-            <span @click="openFile" class="flex items-center text-lg text-yellow-lighter hover:text-yellow cursor-pointer">
+            <span @click="openFile()" class="flex items-center text-lg text-yellow-lighter hover:text-yellow cursor-pointer">
                 Open a comic
             </span>
 
@@ -118,8 +118,8 @@ export default {
             <h3 class="text-left text-xl font-light mb-6 flex items-center">
                 <fi-folder class="mr-2"></fi-folder> Recently Open
             </h3>
-            <ul class="list-reset recent-list cursor-pointer">
-                <li class="text-grey-darkest text-lg mb-4" v-for="file in filteredRecent" :key="file.id">
+            <ul class="list-reset recent-list">
+                <li v-for="file in filteredRecent" :key="file.id" @click="openFile(file.path)" class="cursor-pointer text-grey-darkest text-lg mb-4">
                     <span class="text-yellow-lighter mr-6">{{ file.title }}</span> {{ getShortPath(file) }}
                 </li>
                 <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile">Another file?</li>
@@ -130,8 +130,8 @@ export default {
             <h3 class="text-left text-xl font-light mb-6 flex items-center">
                 <fi-bookmark class="mr-2"></fi-bookmark> Bookmarks
             </h3>
-            <ul class="list-reset bookmarks cursor-pointer">
-                <li class="text-yellow-lighter hover:text-yellow text-lg mb-4" v-for="bookmark in filteredBookmarks" :key="bookmark.id">
+            <ul class="list-reset bookmarks">
+                <li v-for="bookmark in filteredBookmarks" :key="bookmark.id" @click="openFile(bookmark.path)" class="cursor-pointer text-yellow-lighter hover:text-yellow text-lg mb-4">
                     {{ bookmark.title }}
                 </li>
             </ul>

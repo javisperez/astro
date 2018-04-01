@@ -38,8 +38,9 @@ export default {
     },
 
     beforeMount() {
-        ipcRenderer.on('file:open', _ => {
-            this.openFile();
+        ipcRenderer.on('file:open', (e, file) => {
+            console.log('file open');
+            this.openFile(file);
         });
 
         ipcRenderer.on('bookmarks:add', _ => {
@@ -62,13 +63,22 @@ export default {
     },
 
     methods: {
-        openFile() {
-            Importer.open({
-                    onSelect: (filename) => {
-                        this.isExtracting = true;
-                    }
-                })
-                .then((data) => {
+        openFile(file = null) {
+            console.log('file', file);
+            let open = null;
+
+            if (!file) {
+                open = Importer.open({
+                        onSelect: (filename) => {
+                            this.isExtracting = true;
+                        }
+                    });
+            } else {
+                open = Importer.import(file);
+                this.isExtracting = true;
+            }
+
+            open.then((data) => {
                     this.comic = {
                         title: data.info.title,
                         file: data.info.filename,
