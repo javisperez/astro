@@ -18,6 +18,7 @@ export default {
     data() {
         return {
             recent: [],
+            search: '',
         };
     },
 
@@ -37,6 +38,16 @@ export default {
         getShortPath(file) {
             return Helper.getShortPath(file.path.replace(file.title, '')).slice(0, -1);
         },
+    },
+
+    computed: {
+        filteredRecent() {
+            if (!this.search) {
+                return this.recent;
+            }
+
+            return this.recent.filter(r => r.path.toLowerCase().includes(this.search.toLowerCase()))
+        }
     }
 }
 </script>
@@ -56,7 +67,7 @@ export default {
         <span class="absolute text-grey-dark" style="top: 6px; left: 6px;">
             <fi-search></fi-search>
         </span>
-        <input type="text" class="shadow pl-8 appearance-none border rounded w-full py-2 pr-3 text-grey-darker" placeholder="Search titles">
+        <input type="text" v-model="search" class="shadow pl-8 appearance-none border rounded w-full py-2 pr-3 text-grey-darker" placeholder="Search titles">
     </div>
 
     <!-- Default actions -->
@@ -93,7 +104,7 @@ export default {
                 <fi-folder class="mr-2"></fi-folder> Recently Open
             </h3>
             <ul class="list-reset recent-list cursor-pointer">
-                <li class="text-grey-darkest text-lg mb-4" v-for="file in recent" :key="file.id">
+                <li class="text-grey-darkest text-lg mb-4" v-for="file in filteredRecent" :key="file.id">
                     <span class="text-yellow-lighter mr-6">{{ file.title }}</span> {{ getShortPath(file) }}
                 </li>
                 <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile">Another file?</li>
