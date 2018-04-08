@@ -31,8 +31,8 @@ export default {
     beforeMount() {
         // Show the tools menu
         ipcRenderer.send('menu:show', 'tools');
-        ipcRenderer.send('menu:show', 'add-to-bookmark');
-        ipcRenderer.send('menu:show', 'add-to-bookmark:separator');
+        ipcRenderer.send('menu:enable', 'add-to-bookmark');
+        ipcRenderer.send('menu:enable', 'close-file');
 
         // Listen for the tools menu click
         ipcRenderer.on('tools:tool', (e, tool) => {
@@ -273,7 +273,7 @@ export default {
 
         <!-- Thumbnails -->
         <div class="thumbnails-list whitespace-no-wrap flex" :class="{'expanded': isThumbnailExpanded}">
-            <ul class="list-reset overflow-x-hidden">
+            <ul class="list-reset overflow-hidden">
                 <li class="inline-block px-1" v-for="(image, $index) in files" :key="$index"
                     v-if="thumbnailInRange($index)" :class="{
                         'active': (currentIndex === $index) || (currentIndex + 1 === $index && currentMode === 'split')
@@ -283,6 +283,11 @@ export default {
             </ul>
 
             <div class="reading-modes flex flex-col justify-between ml-2">
+                <!-- Close the thumbnails -->
+                <button class="tool text-grey-dark hover:text-grey" @click="toggleThumbnails()">
+                    <fi-x></fi-x>
+                </button>
+
                 <!-- Split mode -->
                 <button class="tool text-grey-dark hover:text-grey" title="Split mode" :class="{active: currentMode === 'split'}"
                     @click="toggleCurrentMode('split')">

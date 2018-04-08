@@ -39,8 +39,11 @@ export default {
 
     beforeMount() {
         ipcRenderer.on('file:open', (e, file) => {
-            console.log('file open');
             this.openFile(file);
+        });
+
+        ipcRenderer.on('file:close', (e, file) => {
+            this.closeFile();
         });
 
         ipcRenderer.on('bookmarks:add', _ => {
@@ -64,7 +67,6 @@ export default {
 
     methods: {
         openFile(file = null) {
-            console.log('file', file);
             let open = null;
 
             if (!file) {
@@ -100,6 +102,13 @@ export default {
 
                     this.isExtracting = false;
                 });
+        },
+
+        closeFile() {
+            this.comic = {};
+            this.files = [];
+            this.title = '';
+            this.currentPage = 0;
         },
 
         maximizeWindow() {

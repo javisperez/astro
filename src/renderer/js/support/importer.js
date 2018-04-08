@@ -90,13 +90,14 @@ class Importer {
 
                 let files = [];
 
-                if (isCached) {
-                    // If we already have a cache folder, use it
-                    files = self.fromCache(tmp);
-                } else {
-                    // Otherwise, read it from the file
-                    files = self.fromFile(file);
-                }
+                // @todo implement cache, is buggy now
+                // if (isCached) {
+                //     // If we already have a cache folder, use it
+                //     files = self.fromCache(tmp);
+                // } else {
+                // Otherwise, read it from the file
+                files = self.fromFile(file);
+                // }
 
                 // Empty file? nothing else to do
                 if (!files.length) {
@@ -105,14 +106,15 @@ class Importer {
                 }
 
                 // Populate the cache files, if doesn't exists
-                if (!isCached) {
+                // @todo implement cache, is buggy right now
+                // if (!isCached) {
                     files.forEach((file) => {
                         // Where is this file being extracted to?
                         file.path = path.join(tmp, file.name.split('/').pop());
                         // Write the file content into the file's path
                         fs.appendFileSync(file.path, file.data, { flag: 'w' });
                     });
-                }
+                // }
 
                 // Number of pages this file has
                 data.info.pages = files.length;

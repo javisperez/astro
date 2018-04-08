@@ -10,16 +10,15 @@ const template = [
         label: 'File',
         submenu: [
             {
-                label: 'Open file',
+                label: 'Open File',
                 accelerator: 'CmdOrCtrl+O',
                 click() {
                     win.webContents.send('file:open');
                 },
             },
-            { type: 'separator' },
             {
                 id: 'recent',
-                label: 'Recent files',
+                label: 'Open Recent',
                 submenu: [
                     { type: 'separator' },
                     {
@@ -30,6 +29,15 @@ const template = [
                     }
                 ]
             },
+            { type: 'separator' },
+            {
+                id: 'close-file',
+                label: 'Close File',
+                enabled: false,
+                click() {
+                    win.webContents.send('file:close');
+                }
+            }
         ]
     },
 
@@ -64,7 +72,7 @@ const template = [
             },
 
             {
-                label: 'Brightness up',
+                label: 'Brightness Up',
                 accelerator: 'CmdOrCtrl+Shift+Up',
                 click() {
                     win.webContents.send('tools:tool', 'brightness-up');
@@ -72,7 +80,7 @@ const template = [
             },
 
             {
-                label: 'Brightness down',
+                label: 'Brightness Down',
                 accelerator: 'CmdOrCtrl+Shift+Down',
                 click() {
                     win.webContents.send('tools:tool', 'brightness-down');
@@ -88,18 +96,21 @@ const template = [
         submenu: [
             {
                 id: 'add-to-bookmark',
-                label: 'Add to bookmark',
-                visible: false,
+                label: 'Add To Bookmarks',
+                enabled: false,
                 accelerator: 'CmdOrCtrl+B',
                 click() {
                     win.webContents.send('bookmarks:add');
                 }
             },
             {
-                id: 'add-to-bookmark:separator',
-                visible: false,
-                type: 'separator'
-            }
+                label: 'Manage Bookmarks',
+                accelerator: 'CmdOrCtrl+Shift+B',
+                click() {
+                    win.webContents.send('bookmarks:manage');
+                }
+            },
+            { type: 'separator' }
         ]
     },
 
@@ -133,7 +144,7 @@ const template = [
             },
 
             {
-                label: 'Check for updates',
+                label: 'Check For Updates',
             }
         ]
     }
@@ -228,6 +239,30 @@ class AppMenu {
         this.build();
     }
 
+    enable(menuItemId) {
+        const menu = this._getMenuItemById(this.template, menuItemId);
+
+        if (!menu) {
+            return;
+        }
+
+        menu.enabled = true;
+
+        this.build();
+    }
+
+    disable(menuItemId) {
+        const menu = this._getMenuItemById(this.template, menuItemId);
+
+        if (!menu) {
+            return;
+        }
+
+        menu.enabled = false;
+
+        this.build();
+    }
+
     setRecentFiles(recent) {
         const menu = this._getMenuItemById(this.template, 'recent');
         const clear = menu.submenu.slice(menu.submenu.length - 2);
@@ -249,7 +284,7 @@ class AppMenu {
 
     setBookmarks(bookmarks) {
         const menu = this._getMenuItemById(this.template, 'bookmarks');
-        const add = menu.submenu.slice(0, 2);
+        const add = menu.submenu.slice(0, 3);
         menu.submenu = [];
 
         // Add the `add to bookmarks` option (and it's separator)

@@ -21,9 +21,9 @@
     "package:linux": "NODE_ENV=production electron-packager . Astro --platform=linux --arch=ia32 --icon=assets/app.ico --out=package --asar=true --overwrite=force",
     "pack": "NODE_ENV=production electron-builder --dir",
     "build": "NODE_ENV=production npm run production && electron-builder -mwl",
-    "build:mac": "NODE_ENV=production npm run production && electron-builder --mac",
-    "build:win": "NODE_ENV=production npm run production && electron-builder --win",
-    "build:linux": "NODE_ENV=production npm run production && electron-builder --linux"
+    "build:mac": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --mac",
+    "build:win": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --win",
+    "build:linux": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --linux"
   },
   "dependencies": {
     "adm-zip": "^0.4.7",

@@ -78,7 +78,7 @@ export default {
     </div>
 
     <!-- Search -->
-    <div class="search mt-8 mb-8 w-full max-w-xs relative">
+    <div class="search mb-8 w-full max-w-xs relative">
         <span class="absolute text-grey-dark" style="top: 6px; left: 6px;">
             <fi-search></fi-search>
         </span>
@@ -86,8 +86,8 @@ export default {
     </div>
 
     <!-- Default actions -->
-    <div class="w-full flex justify-">
-        <div class="left-pane w-1/3">
+    <div class="w-full flex mt-8">
+        <div class="left-pane w-1/3 pr-2">
             <!-- Start here -->
             <h3 class="text-left text-xl font-light mb-6 flex items-center">
                 <fi-file class="mr-2"></fi-file> Start here
@@ -114,7 +114,7 @@ export default {
             </ul>
         </div>
 
-        <div class="middle-pane w-1/3">
+        <div class="middle-pane w-1/3 px-2">
             <h3 class="text-left text-xl font-light mb-6 flex items-center">
                 <fi-folder class="mr-2"></fi-folder> Recently Open
             </h3>
@@ -122,11 +122,11 @@ export default {
                 <li v-for="file in filteredRecent" :key="file.id" @click="openFile(file.path)" class="cursor-pointer text-grey-darkest text-lg mb-4">
                     <span class="text-yellow-lighter mr-6">{{ file.title }}</span> {{ getShortPath(file) }}
                 </li>
-                <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile">Another file?</li>
+                <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile()">Another file?</li>
             </ul>
         </div>
 
-        <div class="right-pane w-1/3">
+        <div class="right-pane w-1/3 pl-2">
             <h3 class="text-left text-xl font-light mb-6 flex items-center">
                 <fi-bookmark class="mr-2"></fi-bookmark> Bookmarks
             </h3>

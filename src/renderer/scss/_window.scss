@@ -9,6 +9,30 @@ body {
     height: auto;
 }
 
+* {
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+        background-color: transparent;
+
+        &-track {
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        &-thumb {
+            @apply .bg-ebony-lighter;
+            border-radius: 10px;
+        }
+
+        &-corner {
+            display: none;
+            height: 0px;
+            width: 0px;
+        }
+    }
+}
+
 .window {
     @apply text-white .overflow-hidden;
 
