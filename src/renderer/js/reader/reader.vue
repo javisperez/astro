@@ -24,6 +24,7 @@ export default {
             currentTool: null,
             isTransitioning: false,
             isThumbnailExpanded: false,
+            isModifiable: true,
             currentBrightness: 100,
         };
     },
@@ -183,6 +184,10 @@ export default {
 
             currentPage.zoom.level = Math.min(3, Math.max(0.5, zoom.toFixed(2)));
         },
+
+        toggleModifiers() {
+            this.isModifiable = !this.isModifiable;
+        }
     },
 
     watch: {
@@ -210,6 +215,16 @@ export default {
                 this.pages = pages;
             }
         },
+    },
+
+    computed: {
+        currentPage() {
+            return this.pages[this.currentIndex];
+        },
+
+        haveActiveModifiers() {
+            return this.currentBrightness !== 100 || this.currentPage.zoom.level !== 1;
+        }
     }
 }
 </script>
@@ -297,8 +312,41 @@ export default {
         </div>
 
         <div class="pages" ref="pages" :class="currentMode">
+            <!-- Current applied changes -->
+            <transition name="slide-right">
+                <div class="active-modifiers z-10 absolute bg-ebony border-blue-darker
+                    border text-blue-light text-sm py-1 px-2 pin-r mt-8 mr-4 rounded-lg shadow
+                    cursor-default flex items-center"
+                    :class="{'opacity-50 hover:opacity-100': isModifiable, 'opacity-100': !isModifiable}"
+                    v-if="haveActiveModifiers">
+                    <!-- Zoom level -->
+                    <span class="zoom-level mr-2 text-sienna flex items-center"
+                        :title="`Current zoom is ${currentPage.zoom.level * 100}%`"
+                        v-show="currentPage.zoom.level !== 1 && isModifiable">
+                        <fi-zoom-in size="12" v-show="currentPage.zoom.level > 1"></fi-zoom-in>
+                        <fi-zoom-out size="12" v-show="currentPage.zoom.level < 1"></fi-zoom-out>
+                        {{ currentPage.zoom.level * 100 }}%
+                    </span>
+
+                    <!-- Brightness level -->
+                    <span class="brightness-level mr-2 text-yellow flex items-center"
+                        :title="`Current brightness is ${currentBrightness}%`"
+                        v-show="currentBrightness !== 100 && isModifiable">
+                        <fi-sunrise size="12" v-show="currentBrightness > 100"></fi-sunrise>
+                        <fi-sunset size="12" v-show="currentBrightness < 100"></fi-sunset>
+                        {{ currentBrightness }}%
+                    </span>
+
+                    <!-- Disable all the effects -->
+                    <span class="disable-modifiers cursor-pointer" @click="toggleModifiers()">
+                        <fi-power size="12"></fi-power>
+                    </span>
+                </div>
+            </transition>
+
+            <!-- Pages -->
             <page v-for="(page, $index) in pages" :ref="'page'+$index" :key="$index"
-                v-if="isVisible($index)" :data="page"></page>
+                v-if="isVisible($index)" :data="page" :modifiable="isModifiable"></page>
         </div>
     </div>
   </div>

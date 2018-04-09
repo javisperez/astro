@@ -4,6 +4,10 @@ export default {
 
     props: {
         data: Object,
+        modifiable: {
+            type: Boolean,
+            default: true,
+        }
     },
 
     data() {
@@ -40,6 +44,10 @@ export default {
 
     computed: {
         style() {
+            if (!this.modifiable) {
+                return '';
+            }
+
             const keys = ['filter', 'transform', 'transformOrigin'];
 
             let styles = {};
