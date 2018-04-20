@@ -1,231 +1,231 @@
 <script>
 import fs from 'fs';
+import { db } from 'support';
 import page from './page.vue';
 import { ipcRenderer } from 'electron';
-import { db } from 'support';
 
 export default {
-    name: 'reader',
+  name: 'reader',
 
-    components: {
-        page
-    },
+  components: {
+    page
+  },
 
-    props: {
-        files: Array,
-        metadata: Object,
-    },
+  props: {
+    files: Array,
+    metadata: Object,
+  },
 
-    data() {
-        return {
-            pages: [],
-            currentIndex: 0,
-            currentMode: 'default',
-            currentTool: null,
-            isTransitioning: false,
-            isThumbnailExpanded: false,
-            isModifiable: true,
-            currentBrightness: 100,
-        };
-    },
+  data() {
+    return {
+      pages: [],
+      currentIndex: 0,
+      currentMode: 'default',
+      currentTool: null,
+      isTransitioning: false,
+      isThumbnailExpanded: false,
+      isModifiable: true,
+      currentBrightness: 100,
+    };
+  },
 
-    beforeMount() {
-        // Show the tools menu
-        ipcRenderer.send('menu:show', 'tools');
-        ipcRenderer.send('menu:enable', 'add-to-bookmark');
-        ipcRenderer.send('menu:enable', 'close-file');
+  beforeMount() {
+    // Show the tools menu
+    ipcRenderer.send('menu:show', 'tools');
+    ipcRenderer.send('menu:enable', 'add-to-bookmark');
+    ipcRenderer.send('menu:enable', 'close-file');
 
-        // Listen for the tools menu click
-        ipcRenderer.on('tools:tool', (e, tool) => {
-            switch(tool) {
-                case 'zoom-in':
-                    this.setZoom(0.2);
-                    break;
+    // Listen for the tools menu click
+    ipcRenderer.on('tools:tool', (e, tool) => {
+      switch(tool) {
+        case 'zoom-in':
+          this.setZoom(0.2);
+          break;
 
-                case 'zoom-out':
-                    this.setZoom(-0.2);
-                    break;
+        case 'zoom-out':
+          this.setZoom(-0.2);
+          break;
 
-                case 'brightness-up':
-                    this.setBrightness(this.currentBrightness + 10);
-                    break;
+        case 'brightness-up':
+          this.setBrightness(this.currentBrightness + 10);
+          break;
 
-                case 'brightness-down':
-                    this.setBrightness(this.currentBrightness - 10);
-                    break;
+        case 'brightness-down':
+          this.setBrightness(this.currentBrightness - 10);
+          break;
 
-                default:
-                    this.toggleTool(tool);
-                    break;
-            }
+        default:
+          this.toggleTool(tool);
+          break;
+      }
+    });
+  },
+
+  beforeDestroy() {
+    ipcRenderer.send('menu:hide', 'tools');
+  },
+
+  methods: {
+      nextImage() {
+        this.currentIndex = Math.min(this.files.length - 1, this.currentIndex + 1);
+        this.saveHistory();
+      },
+
+      previousImage() {
+        this.currentIndex = Math.max(0, this.currentIndex - 1);
+        this.saveHistory();
+      },
+
+      toggleTool(tool = null) {
+        if (this.currentTool === tool) {
+          this.currentTool = null;
+        } else {
+          this.currentTool = tool;
+        }
+      },
+
+      toggleCurrentMode(mode = 'default') {
+        this.currentTool = null;
+
+        if (this.isTransitioning) {
+          return;
+        }
+
+        this.isTransitioning = true;
+
+        if (this.currentMode === mode) {
+          this.currentMode = 'default';
+        } else {
+          this.currentMode = mode;
+        }
+
+        // Save it
+        this.saveHistory();
+
+        // And now flip it!
+        const page = this.$refs[`page${this.currentIndex}`][0].$el;
+        const first = page.getBoundingClientRect();
+
+        this.$nextTick(() => {
+          const last = page.getBoundingClientRect();
+
+          // Animate the transition
+          this.flip(
+            page,
+            `scale(${first.width / last.width})`,
+            `scale(1)`,
+            () => {
+                this.isTransitioning = false;
+            },
+            400
+          );
         });
-    },
+      },
 
-    beforeDestroy() {
-        ipcRenderer.send('menu:hide', 'tools');
-    },
+      toggleThumbnails() {
+        this.isThumbnailExpanded = !this.isThumbnailExpanded;
+      },
 
-    methods: {
-        nextImage() {
-            this.currentIndex = Math.min(this.files.length - 1, this.currentIndex + 1);
-            this.saveHistory();
-        },
-
-        previousImage() {
-            this.currentIndex = Math.max(0, this.currentIndex - 1);
-            this.saveHistory();
-        },
-
-        toggleTool(tool = null) {
-            if (this.currentTool === tool) {
-                this.currentTool = null;
-            } else {
-                this.currentTool = tool;
-            }
-        },
-
-        toggleCurrentMode(mode = 'default') {
-            this.currentTool = null;
-
-            if (this.isTransitioning) {
-                return;
-            }
-
-            this.isTransitioning = true;
-
-            if (this.currentMode === mode) {
-                this.currentMode = 'default';
-            } else {
-                this.currentMode = mode;
-            }
-
-            // Save it
-            this.saveHistory();
-
-            // And now flip it!
-            const page = this.$refs[`page${this.currentIndex}`][0].$el;
-            const first = page.getBoundingClientRect();
-
-            this.$nextTick(() => {
-                const last = page.getBoundingClientRect();
-
-                // Animate the transition
-                this.flip(
-                    page,
-                    `scale(${first.width / last.width})`,
-                    `scale(1)`,
-                    () => {
-                        this.isTransitioning = false;
-                    },
-                    400
-                );
-            });
-        },
-
-        toggleThumbnails() {
-            this.isThumbnailExpanded = !this.isThumbnailExpanded;
-        },
-
-        isVisible(index) {
-            if (index === this.currentIndex) {
-                return true;
-            }
-
-            if (this.currentMode === 'split' && index === this.currentIndex + 1) {
-                return true;
-            }
-
-            return false;
-        },
-
-        flip(element, from, to, callback, duration = 400) {
-            element.style.transformOrigin = '0 0';
-            element.style.transform = from;
-
-            setTimeout(() => {
-                element.style.transition = `transform ${duration / 1000}s`;
-                element.style.transform = to;
-            });
-
-            setTimeout(() => {
-                element.style.transform = 'none';
-                element.style.transition = 'none';
-
-                if (callback) {
-                    callback();
-                }
-            }, duration + 50);
-        },
-
-        saveHistory() {
-            localStorage.setItem(`${this.metadata.key}-current-index`, this.currentIndex);
-            localStorage.setItem(`${this.metadata.key}-current-mode`, this.currentMode);
-        },
-
-        thumbnailInRange(index) {
-            if (index > this.currentIndex - 5 && index < this.currentIndex + 5) {
-                return true;
-            }
-
-            return false;
-        },
-
-        setBrightness(brightness = 100) {
-            this.currentBrightness = Math.max(0, Math.min(200, brightness));
-
-            this.pages.forEach(page => {
-                page.brightness = this.currentBrightness;
-            })
-        },
-
-        setZoom(delta = 0) {
-            const currentPage = this.pages[this.currentIndex];
-            const zoom = currentPage.zoom.level + delta;
-
-            currentPage.zoom.level = Math.min(3, Math.max(0.5, zoom.toFixed(2)));
-        },
-
-        toggleModifiers() {
-            this.isModifiable = !this.isModifiable;
+      isVisible(index) {
+        if (index === this.currentIndex) {
+          return true;
         }
-    },
 
-    watch: {
-        files: {
-            immediate: true,
-            deep: true,
-            handler(value, old) {
-                const pages = [];
-
-                this.currentIndex = Number(localStorage.getItem(`${this.metadata.key}-current-index`)) || 0,
-                this.currentMode = localStorage.getItem(`${this.metadata.key}-current-mode`) || 'default',
-
-                value.forEach(file => {
-                    pages.push({
-                        file,
-                        brightness: 100,
-                        zoom: {
-                            x: 0,
-                            y: 0,
-                            level: 1,
-                        }
-                    });
-                });
-
-                this.pages = pages;
-            }
-        },
-    },
-
-    computed: {
-        currentPage() {
-            return this.pages[this.currentIndex];
-        },
-
-        haveActiveModifiers() {
-            return this.currentBrightness !== 100 || this.currentPage.zoom.level !== 1;
+        if (this.currentMode === 'split' && index === this.currentIndex + 1) {
+          return true;
         }
+
+        return false;
+      },
+
+      flip(element, from, to, callback, duration = 400) {
+        element.style.transformOrigin = '0 0';
+        element.style.transform = from;
+
+        setTimeout(() => {
+          element.style.transition = `transform ${duration / 1000}s`;
+          element.style.transform = to;
+        });
+
+        setTimeout(() => {
+          element.style.transform = 'none';
+          element.style.transition = 'none';
+
+          if (callback) {
+            callback();
+          }
+        }, duration + 50);
+      },
+
+      saveHistory() {
+        localStorage.setItem(`${this.metadata.key}-current-index`, this.currentIndex);
+        localStorage.setItem(`${this.metadata.key}-current-mode`, this.currentMode);
+      },
+
+      thumbnailInRange(index) {
+        if (index > this.currentIndex - 5 && index < this.currentIndex + 5) {
+          return true;
+        }
+
+        return false;
+      },
+
+      setBrightness(brightness = 100) {
+        this.currentBrightness = Math.max(0, Math.min(200, brightness));
+
+        this.pages.forEach(page => {
+          page.brightness = this.currentBrightness;
+        })
+      },
+
+      setZoom(delta = 0) {
+        const currentPage = this.pages[this.currentIndex];
+        const zoom = currentPage.zoom.level + delta;
+
+        currentPage.zoom.level = Math.min(3, Math.max(0.5, zoom.toFixed(2)));
+      },
+
+      toggleModifiers() {
+        this.isModifiable = !this.isModifiable;
+      }
+  },
+
+  watch: {
+    files: {
+      immediate: true,
+      deep: true,
+      handler(value, old) {
+        const pages = [];
+
+        this.currentIndex = Number(localStorage.getItem(`${this.metadata.key}-current-index`)) || 0,
+        this.currentMode = localStorage.getItem(`${this.metadata.key}-current-mode`) || 'default',
+
+        value.forEach(file => {
+          pages.push({
+            file,
+            brightness: 100,
+            zoom: {
+              x: 0,
+              y: 0,
+              level: 1,
+            }
+          });
+        });
+
+        this.pages = pages;
+      }
+    },
+  },
+
+  computed: {
+    currentPage() {
+      return this.pages[this.currentIndex];
+    },
+
+    haveActiveModifiers() {
+      return this.currentBrightness !== 100 || this.currentPage.zoom.level !== 1;
     }
+  }
 }
 </script>
 
@@ -236,27 +236,38 @@ export default {
         <div class="tools">
             <!-- Move -->
             <button class="tool" :class="{'active': currentTool === 'drag'}" title="Drag"
-                @click="toggleTool('drag')">
+                @click="toggleTool('drag')"
+            >
                 <fi-move></fi-move>
             </button>
 
             <!-- Zoom in -->
-            <button class="tool" title="Zoom In" @click="setZoom(0.2)">
+            <button class="tool" title="Zoom In" @click="setZoom(0.2)"
+                :class="{'applied': currentPage.zoom.level > 1}"
+            >
                 <fi-zoom-in></fi-zoom-in>
             </button>
 
             <!-- Zoom out -->
-            <button class="tool" title="Zoom Out" @click="setZoom(-0.2)">
+            <button class="tool" title="Zoom Out" @click="setZoom(-0.2)"
+                :class="{'applied': currentPage.zoom.level < 1}"
+            >
                 <fi-zoom-out></fi-zoom-out>
             </button>
 
             <!-- Sunrise (brightness up) -->
-            <button class="tool push-btn" title="Brightness up" @click="setBrightness(currentBrightness + 10)">
+            <button class="tool push-btn" title="Brightness up"
+                @click="setBrightness(currentBrightness + 10)"
+                :class="{'applied': currentBrightness > 100}"
+            >
                 <fi-sunrise></fi-sunrise>
             </button>
 
             <!-- Sunset (brightness down) -->
-            <button class="tool push-btn" title="Brightness down" @click="setBrightness(currentBrightness - 10)">
+            <button class="tool push-btn" title="Brightness down"
+                @click="setBrightness(currentBrightness - 10)"
+                :class="{'applied': currentBrightness < 100}"
+            >
                 <fi-sunset></fi-sunset>
             </button>
         </div>
