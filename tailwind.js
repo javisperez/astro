@@ -96,6 +96,7 @@ let colors = {
     'yellow-darker' : '#8F8A35',
     'yellow-darkest' : '#47451B',
 
+    'error': 'red',
 }
 
 module.exports = {
