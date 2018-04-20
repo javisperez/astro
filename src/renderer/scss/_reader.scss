@@ -33,6 +33,22 @@
                     &.active {
                         @apply .bg-ebony;
                     }
+
+                    &.applied {
+                        @apply .relative;
+
+                        &::before {
+                            @apply .absolute;
+
+                            content: '';
+                            background: rgba(255, 255, 255, 0.5);
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            left: -25px;
+                            top: 15px;
+                        }
+                    }
                 }
 
                 .page-number {
