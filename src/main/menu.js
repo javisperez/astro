@@ -48,6 +48,24 @@ const template = [
         visible: false,
         submenu: [
             {
+                label: 'Previous Page',
+                accelerator: 'CmdOrCtrl+Shift+Left',
+                click() {
+                    win.webContents.send('page:previous');
+                }
+            },
+
+            {
+                label: 'Next Page',
+                accelerator: 'CmdOrCtrl+Shift+Right',
+                click() {
+                    win.webContents.send('page:next');
+                }
+            },
+
+            { type: 'separator' },
+
+            {
                 label: 'Drag',
                 accelerator: 'CmdOrCtrl+Shift+D',
                 click() {
