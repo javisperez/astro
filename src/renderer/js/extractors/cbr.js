@@ -6,31 +6,31 @@ const Unrar = require('electron-unrar-js');
 
 export default
 class CbrExtractor extends Extractor {
-    extract(path) {
-        const buffer = Uint8Array.from(fs.readFileSync(path)).buffer;
-        const unrar = Unrar.createExtractorFromData(buffer);
-        const extracted = unrar.extractAll();
+  extract(path) {
+    const buffer = Uint8Array.from(fs.readFileSync(path)).buffer;
+    const unrar = Unrar.createExtractorFromData(buffer);
+    const extracted = unrar.extractAll();
 
-        if (!extracted[1]) {
-            return [];
-        }
-
-        return extracted[1].files;
+    if (!extracted[1]) {
+      return [];
     }
 
-    transform(item) {
-        let data = null;
+    return extracted[1].files;
+  }
 
-        // Folders doesn't have data
-        if (!item.fileHeader.flags.directory) {
-            data = new Buffer(item.extract[1]);
-        }
+  transform(item) {
+    let data = null;
 
-        return new File({
-            name: item.fileHeader.name,
-            size: item.fileHeader.unpSize,
-            data,
-            isDirectory: item.fileHeader.flags.directory,
-        });
+    // Folders doesn't have data
+    if (!item.fileHeader.flags.directory) {
+      data = new Buffer(item.extract[1]);
     }
+
+    return new File({
+      name: item.fileHeader.name,
+      size: item.fileHeader.unpSize,
+      data,
+      isDirectory: item.fileHeader.flags.directory,
+    });
+  }
 }
