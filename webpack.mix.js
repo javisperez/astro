@@ -9,9 +9,9 @@ const PurgecssPlugin = require('purgecss-webpack-plugin');
 //
 // https://github.com/FullHuman/purgecss#extractor
 class TailwindExtractor {
-    static extract(content) {
-        return content.match(/[A-z0-9-:\/]+/g) || [];
-    }
+  static extract(content) {
+    return content.match(/[A-z0-9-:\/]+/g) || [];
+  }
 }
 /*
 |--------------------------------------------------------------------------
@@ -26,75 +26,80 @@ class TailwindExtractor {
 
 mix
 
-    .webpackConfig({
-        resolve: {
-            modules: [
-                path.resolve('./node_modules'),
-                path.resolve('./src/renderer/js')
-            ],
-            alias: {
-                '@': path.resolve('./src/renderer/scss'),
-                'vue$': 'vue/dist/vue.esm.js'
-            }
-        },
-        target: 'electron-renderer'
-    });
+  .webpackConfig({
+    resolve: {
+      modules: [
+        path.resolve('./node_modules'),
+        path.resolve('./src/renderer/js')
+      ],
+      alias: {
+        '@': path.resolve('./src/renderer/scss'),
+        'vue$': 'vue/dist/vue.esm.js'
+      }
+    },
+    target: 'electron-renderer'
+  });
 
 mix
 
-    .setPublicPath('dist')
+  .setPublicPath('dist')
 
-    .copyDirectory('./assets/images', 'dist/images')
+  .copyDirectory('./assets/images', 'dist/images')
 
-    .copy('./src/renderer/index.html', 'dist/index.html')
+  .copy('./src/renderer/index.html', 'dist/index.html')
 
-    // Copy fonts
-    .copyDirectory([
-        './node_modules/typeface-roboto/files',
-        './assets/fonts',
-    ], './dist/fonts')
+  .copy('./src/background/index.html', 'dist/background.html')
 
-    .js('./src/renderer/js/index.js', 'dist/js/app.js')
+  // Copy fonts
+  .copyDirectory([
+    './node_modules/typeface-roboto/files',
+    './assets/fonts',
+  ], './dist/fonts')
 
-    .sass('./src/renderer/scss/app.scss', 'dist/css/app.css')
+  .js('./src/renderer/js/index.js', 'dist/js/app.js')
 
-    .options({
-        processCssUrls: false,
-        postCss: [tailwindcss('./tailwind.js')]
-    })
+  .js('./src/background/index.js', 'dist/js/background.js')
 
-    .browserSync({
-        proxy: false,
-        files: [
-            './src/renderer/**/.js',
-            './src/renderer/**/.vue',
-            './src/renderer/**/.html',
-        ],
-        open: false,
-        server: {
-            baseDir: './dist'
-        },
-        host: 'localhost',
-        notify: false,
-    });
+  .sass('./src/renderer/scss/app.scss', 'dist/css/app.css')
+
+  .options({
+    processCssUrls: false,
+    postCss: [tailwindcss('./tailwind.js')]
+  })
+
+  .browserSync({
+    proxy: false,
+    files: [
+      './src/renderer/**/.js',
+      './src/background/**/.js',
+      './src/renderer/**/.vue',
+      './src/renderer/**/.html',
+    ],
+    open: false,
+    server: {
+      baseDir: './dist'
+    },
+    host: 'localhost',
+    notify: false,
+  });
 
 // Only run PurgeCSS during production builds for faster development builds
 // and so you still have the full set of utilities available during
 // development.
 if (mix.inProduction()) {
-    // Copy icons to build directory
-    mix.copyDirectory('./assets/icons', 'build');
-//  @todo - this is not working currently, fix it!
-//     mix.webpackConfig({
-//         plugins: [
-//             new PurgecssPlugin({
+  // Copy icons to build directory
+  mix.copyDirectory('./assets/icons', 'build');
+  //  @todo - this is not working currently, fix it!
+  //     mix.webpackConfig({
+  //         plugins: [
+  //             new PurgecssPlugin({
 
-//                 // Specify the locations of any files you want to scan for class names.
-//                 paths: glob.sync([
-//                     path.join(__dirname, 'src/**/*.vue'),
-//                     path.join(__dirname, 'src/**/*.js'),
-//                     path.join(__dirname, 'src/**/*.html')
-//                 ]),
+  //                 // Specify the locations of any files you want to scan for class names.
+  //                 paths: glob.sync([
+  //                     path.join(__dirname, 'src/**/*.vue'),
+  //                     path.join(__dirname, 'src/**/*.js'),
+  //                     path.join(__dirname, 'src/**/*.html')
+  //                 ]),
 //                 // whitelistPatterns: [/error-msg-.*/, /scale-list-.*/],
 //                 extractors: [
 //                     {
@@ -109,7 +114,7 @@ if (mix.inProduction()) {
 //         ]
 //     });
 } else {
-    mix.sourceMaps();
+  mix.sourceMaps();
 }
 
 // Full API
