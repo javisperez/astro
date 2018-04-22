@@ -10,7 +10,13 @@ body {
 }
 
 * {
-  outline: none;
+  &,
+  &:hover,
+  &:active,
+  &:focus,
+  button:focus {
+    outline: none;
+  }
 
   ::-webkit-scrollbar {
     width: 6px;

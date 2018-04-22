@@ -1,209 +1,207 @@
 .window {
-    .reader {
-        @apply .flex;
-
-        .toolbar {
-            @apply .bg-ebony-darkest .p-1 .text-sm;
-            width: 82px;
-            padding-top: 60px;
-
-            .tools {
-                @apply .flex .flex-col .items-center .justify-start;
-                height: calc(100vh - 60px);
-
-                .tool {
-                    @apply .text-grey-darkest;
-
-                    padding: 0.5rem;
-                    border-radius: 4px;
-                    margin-bottom: 20px;
-                    line-height: 8px;
-
-                    &:hover,
-                    &:active,
-                    &:focus {
-                        outline: none;
-                    }
-
-                    &:hover,
-                    &.active {
-                        @apply .text-white;
-                    }
-
-                    &.active {
-                        @apply .bg-ebony;
-                    }
-
-                    &.applied {
-                        @apply .relative;
-
-                        &::before {
-                            @apply .absolute;
-
-                            content: '';
-                            background: rgba(255, 255, 255, 0.5);
-                            width: 8px;
-                            height: 8px;
-                            border-radius: 50%;
-                            left: -25px;
-                            top: 15px;
-                        }
-                    }
-                }
-
-                .page-number {
-                    @apply .text-center .text-xl;
-                    padding: 4px;
-                    margin-bottom: 20px;
-                }
-
-                .title {
-                    @apply .mr-2 .ml-auto;
-                }
+  .reader {
+    @apply .flex;
+    
+    .toolbar {
+      @apply .bg-ebony-darkest .p-1 .text-sm;
+      width: 82px;
+      padding-top: 60px;
+      
+      .tools {
+        @apply .flex .flex-col .items-center .justify-start;
+        height: calc(100vh - 60px);
+        
+        .tool {
+          @apply .text-grey-darkest;
+          
+          padding: 0.5rem;
+          border-radius: 4px;
+          margin-bottom: 20px;
+          line-height: 8px;
+          
+          &:not(.disabled):hover,
+          &.active {
+            @apply .text-white;
+          }
+          
+          &.active {
+            @apply .bg-ebony;
+          }
+          
+          &.applied {
+            @apply .relative;
+            
+            &::before {
+              @apply .absolute;
+              
+              content: '';
+              background: rgba(255, 255, 255, 0.5);
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              left: -25px;
+              top: 15px;
             }
+          }
 
-            .progress-bar {
-                @apply .relative;
-                top: 6px;
-                height: 2px;
-                left: -4px;
-                width: 100vw;
-
-                > div {
-                    width: 100%;
-                    height: 100%;
-                    transform-origin: 0;
-                    transform: scale(0);
-                    transition: transform 400ms;
-                }
-            }
+          &.disabled {
+            @apply .opacity-25 .cursor-default;
+          }
         }
-
-        .pages-container {
-            flex: 1;
-            position: relative;
-
-            .pages-info-bar {
-                height: 33px;
-                text-align: center;
-                color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(0, 0, 0, 0.75);
-                position: absolute;
-                bottom: 100px;
-                left: 50%;
-                text-shadow: 0 1px 2px #333;
-                transition: background 0.4s, transform 0.4s;
-                transform: translate(-50%, 240%);
-                z-index: 2;
-                padding-left: 10px;
-                padding-right: 10px;
-                border-radius: 10px;
-                will-change: transform;
-
-                &.expanded {
-                    transform: translate(-50%, 0);
-                }
-
-                &:hover {
-                    background: #000;
-                }
-
-                button {
-                    color: #FFF;
-                    outline: none;
-                }
-            }
-
-            .thumbnails-list {
-                padding: 10px;
-                background: black;
-                border-radius: 10px;
-                position: absolute;
-                bottom: 10px;
-                left: 50%;
-                transform: translate(-50%, 110%);
-                transition: transform 0.4s;
-                z-index: 2;
-                will-change: transform;
-
-                &.expanded {
-                    transform: translate(-50%, 0);
-                }
-
-                li.active {
-                    border: 2px solid white;
-                }
-
-                .reading-modes {
-                    .tool {
-                        &:hover,
-                        &:active,
-                        &:focus {
-                            outline: none;
-                        }
-
-                        &.active {
-                            @apply .text-sienna;
-                        }
-                    }
-                }
-            }
-
-            .pages {
-                @apply .overflow-hidden .flex;
-                height: 100vh;
-
-                &.split,
-                &.continuous {
-                    @apply .overflow-auto;
-                    height: 100vh;
-
-                    .reader-page {
-                        overflow: initial;
-                        height: auto;
-                    }
-                }
-
-                &.continuous {
-                    @apply .flex-col;
-                }
-
-                .reader-page {
-                    @apply .flex-1 .opacity-0 .overflow-auto;
-
-                    height: 100vh;
-                    max-width: 100%;
-                    transition: opacity 400ms;
-                    scroll-behavior: smooth;
-
-                    &.visible {
-                        @apply .opacity-100;
-                    }
-
-                    > img {
-                        width: 100%;
-                        height: auto;
-                        transform: scale(1);
-                        transform-origin: 0 0 0;
-                        transition: transform 400ms, filter 600ms;
-                    }
-                }
-            }
+        
+        .page-number {
+          @apply .text-center .text-xl;
+          padding: 4px;
+          margin-bottom: 20px;
         }
+        
+        .title {
+          @apply .mr-2 .ml-auto;
+        }
+      }
+      
+      .progress-bar {
+        @apply .relative;
+        top: 6px;
+        height: 2px;
+        left: -4px;
+        width: 100vw;
+        
+        > div {
+          width: 100%;
+          height: 100%;
+          transform-origin: 0;
+          transform: scale(0);
+          transition: transform 400ms;
+        }
+      }
     }
+    
+    .pages-container {
+      flex: 1;
+      position: relative;
+      
+      .pages-info-bar {
+        height: 33px;
+        text-align: center;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.75);
+        position: absolute;
+        bottom: 100px;
+        left: 50%;
+        text-shadow: 0 1px 2px #333;
+        transition: background 0.4s, transform 0.4s;
+        transform: translate(-50%, 240%);
+        z-index: 2;
+        padding-left: 10px;
+        padding-right: 10px;
+        border-radius: 10px;
+        will-change: transform;
+        
+        &.expanded {
+          transform: translate(-50%, 0);
+        }
+        
+        &:hover {
+          background: #000;
+        }
+        
+        button {
+          color: #FFF;
+          outline: none;
+        }
+      }
+      
+      .thumbnails-list {
+        padding: 10px;
+        background: black;
+        border-radius: 10px;
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translate(-50%, 110%);
+        transition: transform 0.4s;
+        z-index: 2;
+        will-change: transform;
+        
+        &.expanded {
+          transform: translate(-50%, 0);
+        }
+        
+        li.active {
+          border: 2px solid white;
+        }
+        
+        .reading-modes {
+          .tool {
+            &:hover,
+            &:active,
+            &:focus {
+              outline: none;
+            }
+            
+            &.active {
+              @apply .text-sienna;
+            }
+          }
+        }
+      }
+      
+      .pages {
+        @apply .overflow-hidden .flex;
+        height: 100vh;
+        
+        &.split,
+        &.continuous {
+          @apply .overflow-auto;
+          height: 100vh;
+          
+          .reader-page {
+            overflow: initial;
+            height: auto;
+          }
+        }
+        
+        &.continuous {
+          @apply .flex-col;
+        }
+        
+        .reader-page {
+          @apply .flex-1 .opacity-0 .overflow-auto;
+          
+          height: 100vh;
+          max-width: 100%;
+          transition: opacity 400ms;
+          scroll-behavior: smooth;
+          
+          &.visible {
+            @apply .opacity-100;
+          }
+          
+          > img {
+            width: 100%;
+            height: auto;
+            transform: scale(1);
+            transform-origin: 0 0 0;
+            transition: transform 400ms, filter 600ms;
+          }
+        }
+      }
+    }
+  }
 }
 
 .thumbnails-pages {
-    &-enter,
-    &-leave-to {
-        transform: scale(1);
-    }
-
-    &-enter-to,
-    &-leave {
-        transform: scale(0.5);
-    }
+  &-enter,
+  &-leave-to {
+    transform: scale(1);
+  }
+  
+  &-enter-to,
+  &-leave {
+    transform: scale(0.5);
+  }
 }
