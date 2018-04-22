@@ -14,13 +14,15 @@ export default {
     error: Boolean
   },
 
-  data() {
-    return {
-      counter: 0,
-    }
+  mounted() {
+    this.$progress.start();
   },
 
-  mounted() {
+  updated() {
+    if (this.error) {
+      return;
+    }
+
     this.$progress.start();
   },
 
@@ -39,7 +41,7 @@ export default {
 
     error(value) {
       if (value) {
-        this.$progress.finish();
+        this.$progress.cancel();
       }
     }
   }
@@ -50,10 +52,14 @@ export default {
 <div class="loading-screen" :class="{'error': error}">
   <div class="logo-bg"></div>
 
-  <progress-bar ref="progressBar" :duration="10000"></progress-bar>
+  <progress-bar ref="progressBar" :duration="6000" v-show="!error"></progress-bar>
 
-  <div class="error-message text-white font-lg mt-8" v-if="error">
-    Oh snaps! that doesn't seems like a valid comic file.
+  <div class="error-message text-error font-lg" v-show="error">
+    <fi-x size="62"></fi-x>
+
+    <div>
+      Oh snaps! that doesn't seems like a valid comic file.
+    </div>
   </div>
 </div>
 </template>

@@ -12,30 +12,39 @@ export default {
   data() {
     return {
       progress: 0,
+      isEnabled: true,
     };
   },
 
   methods: {
     start() {
       this.progress = 0;
+      this.isEnabled = true;
       this.update();
     },
 
     update() {
-      if (this.progress === 100) {
+      if (this.progress === 100 || !this.isEnabled) {
         return;
       }
 
       this.progress = Math.min(100, this.progress + 5);
 
       setTimeout(() => {
-
         this.update();
       }, this.frameDuration);
     },
 
     finish() {
       this.progress = 100;
+    },
+
+    set(value) {
+      this.progress = value;
+    },
+
+    cancel() {
+      this.isEnabled = false;
     }
   },
 
@@ -48,7 +57,9 @@ export default {
 </script>
 
 <template>
+<div>
   <progress max="100" :value="progress" min="0" :class="{'done': progress === 100}"></progress>
+</div>
 </template>
 
 <style lang="scss" scoped>

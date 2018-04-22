@@ -89,6 +89,10 @@ export default {
 
   methods: {
     async openFile(file = null) {
+      this.extractFailed = false;
+      this.isExtracting = false;
+      this.files = [];
+
       let _file = file;
 
       if (!file) {
