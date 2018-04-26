@@ -2,6 +2,7 @@
 import fs from 'fs';
 import { db } from 'support';
 import page from './page.vue';
+import dragscroll from 'dragscroll';
 import { ipcRenderer } from 'electron';
 
 export default {
@@ -219,6 +220,14 @@ export default {
         this.pages = pages;
       }
     },
+
+    isDraggable(enabled) {
+      // if (enabled) {
+        this.$nextTick(() => {
+          dragscroll.reset();
+        });
+      // }
+    }
   },
 
   computed: {
@@ -233,7 +242,7 @@ export default {
     isDraggable() {
       return this.currentTool === 'drag' && this.currentMode !== 'split';
     }
-  }
+  },
 }
 </script>
 
@@ -245,7 +254,7 @@ export default {
         <!-- Move -->
         <button class="tool" title="Drag" @click="toggleTool('drag')"
           :class="{
-            'active': currentTool === 'drag',
+            active: currentTool === 'drag',
           }"
         >
           <fi-move></fi-move>

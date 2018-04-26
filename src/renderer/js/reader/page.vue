@@ -18,11 +18,11 @@ export default {
     return {
       isLoaded: false,
       src: null,
-      isMouseDown: false,
-      clickedPosition: {
-        x: 0,
-        y: 0,
-      },
+      // isMouseDown: false,
+      // clickedPosition: {
+      //   x: 0,
+      //   y: 0,
+      // },
     };
   },
 
@@ -35,6 +35,10 @@ export default {
   mounted() {
     const img = this.$el.querySelector('img');
     img.onload = () => { this.isLoaded = true; };
+
+    // document.addEventListener('mouseup', () => {
+    //   this.isMouseDown = false;
+    // });
   },
 
   methods: {
@@ -43,32 +47,35 @@ export default {
       this.$emit(what, { $event, $el });
     },
 
-		onMouseDown(e) {
-      this.isMouseDown = true;
+		// onMouseDown(e) {
+    //   this.isMouseDown = true;
 
-      this.clickedPosition.x = e.pageX;
-      this.clickedPosition.y = e.pageY;
+    //   this.clickedPosition.x = e.pageX;
+    //   this.clickedPosition.y = e.pageY;
 
-      this.emit('mousedown', e);
-    },
+    //   this.emit('mousedown', e);
+    // },
 
-    onMouseUp(e) {
-      this.isMouseDown = false;
-      this.emit('mouseup', e);
-    },
+    // onMouseUp(e) {
+    //   this.isMouseDown = false;
+    //   this.emit('mouseup', e);
+    // },
 
-		onMouseMove(e) {
-      if (this.isMouseDown && this.draggable) {
-        e.preventDefault();
+		// onMouseMove(e) {
+    //   if (this.isMouseDown && this.draggable) {
+    //     e.preventDefault();
 
-        const page = this.$refs.page;
+    //     const page = this.$refs.page;
 
-        page.scrollLeft += this.clickedPosition.x - e.pageX;
-        page.scrollTop += this.clickedPosition.y - e.pageY;
-      }
+    //     page.scrollLeft += (this.clickedPosition.x - e.pageX);
+    //     page.scrollTop += (this.clickedPosition.y - e.pageY);
 
-      this.emit('mousemove', e);
-    },
+    //     this.clickedPosition.x = e.pageX;
+    //     this.clickedPosition.y = e.pageY;
+    //   }
+
+    //   this.emit('mousemove', e);
+    // },
   },
 
   computed: {
@@ -135,10 +142,7 @@ export default {
 </script>
 
 <template>
-	<div class="reader-page" ref="page" :class="{ visible: isLoaded }"
-    @click="emit('click', $event)" @mouseup.prevent="onMouseUp($event)"
-    @mousemove.prevent="onMouseMove($event)" @mousedown.prevent="onMouseDown($event)"
-  >
+	<div class="reader-page" ref="page" :class="{ visible: isLoaded, dragscroll: draggable }">
     <img :style="style" :src="src">
   </div>
 </template>

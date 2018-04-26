@@ -28,6 +28,7 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "dexie": "3.0.0-alpha.2",
+    "dragscroll": "^0.0.8",
     "electron-editor-context-menu": "^1.1.1",
     "electron-unrar-js": "^1.0.1",
     "feather-icons": "^4.7.0",
