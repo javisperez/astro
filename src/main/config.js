@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   url: {
+    dist: `file://${__dirname}/../../dist/`,
     main: `file://${__dirname}/../../dist/index.html`,
     background: `file://${__dirname}/../../dist/background.html`,
   },
