@@ -2,7 +2,6 @@
 import fs from 'fs';
 import { db } from 'support';
 import page from './page.vue';
-import dragscroll from 'dragscroll';
 import { ipcRenderer } from 'electron';
 
 export default {
@@ -220,14 +219,6 @@ export default {
         this.pages = pages;
       }
     },
-
-    isDraggable(enabled) {
-      // if (enabled) {
-        this.$nextTick(() => {
-          dragscroll.reset();
-        });
-      // }
-    }
   },
 
   computed: {
@@ -303,7 +294,7 @@ export default {
     </div>
 
     <!-- The pages -->
-    <div class="pages-container">
+    <div class="pages-container" :class="[currentTool ? `tool-${currentTool}`: null]">
       <div class="pages-info-bar" :class="{'expanded': isThumbnailExpanded}">
         <!-- Previous -->
         <button class="tool" style="height: 24px;" title="Previous page" @click="previousImage()">

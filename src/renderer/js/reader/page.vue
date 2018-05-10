@@ -1,4 +1,6 @@
 <script>
+import dragscroll from 'dragscroll';
+
 export default {
   name: 'page',
 
@@ -136,6 +138,17 @@ export default {
       }
 
       return output;
+    }
+  },
+
+  watch: {
+    draggable: {
+      immediate: true,
+      handler() {
+        this.$nextTick(() => {
+          dragscroll.reset();
+        });
+      }
     }
   }
 }
