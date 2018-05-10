@@ -48,8 +48,6 @@ mix
 
   .copy('./src/renderer/index.html', 'dist/index.html')
 
-  .copy('./src/background/index.html', 'dist/background.html')
-
   // Copy fonts
   .copyDirectory([
     './node_modules/typeface-roboto/files',
@@ -58,7 +56,7 @@ mix
 
   .js('./src/renderer/js/index.js', 'dist/js/app.js')
 
-  .js('./src/background/index.js', 'dist/js/background.js')
+  .js('./src/renderer/js/processes/import.js', 'dist/js/import.js')
 
   .sass('./src/renderer/scss/app.scss', 'dist/css/app.css')
 
