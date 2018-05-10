@@ -4,3 +4,4 @@ export { default as Importer } from './importer';
 export { default as FeatherIcons } from './feather-icons';
 export { default as db } from './db';
 export { default as Helper } from './helper';
+export { default as Process } from './process';

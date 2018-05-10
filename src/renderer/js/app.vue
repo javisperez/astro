@@ -1,7 +1,7 @@
 <script>
 import { reader } from 'reader';
 import { Extract } from 'extractors';
-import { Importer, db } from 'support';
+import { Importer, db, Process } from 'support';
 import { remote, ipcRenderer } from 'electron';
 import { welcome, loadingScreen } from 'welcome';
 
@@ -47,28 +47,6 @@ export default {
       this.closeFile();
     });
 
-    ipcRenderer.on('background:import:success', (e, data) => {
-      this.comic = {
-        title: data.info.title,
-        file: data.info.filename,
-        pages: data.pages,
-        basename: data.info.basename,
-        key: data.key,
-      };
-
-      this.files = data.pages;
-
-      // Let the progress bar finish
-      setTimeout(_ => {
-        this.isExtracting = false;
-      }, 1000);
-    });
-
-    ipcRenderer.on('background:import:failed', (e, data) => {
-      this.extractFailed = true;
-      this.isExtracting = false;
-    });
-
     ipcRenderer.on('bookmarks:add', _ => {
       if (!this.comic.title) {
         return;
@@ -100,7 +78,36 @@ export default {
       }
 
       this.isExtracting = true;
-      ipcRenderer.send('background:import', _file);
+
+      const p = new Process('import.js');
+
+      p.on('error', (data) => {
+        this.extractFailed = true;
+        this.isExtracting = false;
+
+        p.terminate();
+      });
+
+      p.on('success', (data) => {
+        this.comic = {
+          title: data.info.title,
+          file: data.info.filename,
+          pages: data.pages,
+          basename: data.info.basename,
+          key: data.key,
+        };
+
+        this.files = data.pages;
+
+        // Let the progress bar finish
+        setTimeout(_ => {
+          this.isExtracting = false;
+        }, 1000);
+
+        p.terminate();
+      });
+
+      p.send('import', _file);
     },
 
     closeFile() {
