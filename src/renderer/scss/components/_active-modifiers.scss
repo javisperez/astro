@@ -1,0 +1,16 @@
+.active-modifiers {
+  @apply .z-10 .absolute .bg-ebony .border-blue-darker .border .text-blue-light .text-sm;
+  @apply .py-1 .px-2 .pin-r .mt-8 .mr-4;
+  @apply .rounded-lg .shadow;
+  @apply .cursor-default;
+  @apply .flex .items-center;
+  @apply .opacity-50;
+
+  &:hover {
+    @apply .opacity-100;
+  }
+
+  &.toggled {
+    @apply .opacity-100;
+  }
+}

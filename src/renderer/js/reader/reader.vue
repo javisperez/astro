@@ -3,6 +3,7 @@ import fs from 'fs';
 import { db } from 'support';
 import readerPage from './reader-page.vue';
 import readerToolbar from './reader-toolbar.vue';
+import activeModifiers from './active-modifiers.vue';
 import dragscroll from 'dragscroll';
 import { ipcRenderer } from 'electron';
 
@@ -12,6 +13,7 @@ export default {
   components: {
     readerPage,
     readerToolbar,
+    activeModifiers,
   },
 
   props: {
@@ -195,20 +197,13 @@ export default {
       return this.currentTool === 'drag';
     }
   },
-
-  filters: {
-    number(input, decimals = 2) {
-      return input.toFixed(decimals);
-    }
-  }
 }
 </script>
 
 <template>
   <div class="reader">
     <!-- toolbar -->
-    <reader-toolbar v-model="currentTool" v-bind="currentPage.modifiers"
-      @modified="applyModifiers"></reader-toolbar>
+    <reader-toolbar v-model="currentTool" v-bind="currentPage.modifiers" @modified="applyModifiers"></reader-toolbar>
 
     <!-- The pages -->
     <div class="pages-container" :class="[
@@ -272,39 +267,7 @@ export default {
         (currentMode === 'split' && isDraggable) ? 'dragscroll' : null
       ]">
         <!-- Current applied changes -->
-        <transition name="slide-right">
-          <div class="active-modifiers z-10 absolute bg-ebony border-blue-darker
-            border text-blue-light text-sm py-1 px-2 pin-r mt-8 mr-4 rounded-lg shadow
-            cursor-default flex items-center"
-            :class="{'opacity-50 hover:opacity-100': isModifiable, 'opacity-100': !isModifiable}"
-            v-if="false"
-          >
-            <!-- Zoom level -->
-            <span class="zoom-level mr-2 text-sienna flex items-center"
-              :title="`Current zoom is ${currentPage.modifiers.zoom * 100}%`"
-              v-show="currentPage.modifiers.zoom !== 1 && isModifiable"
-            >
-              <fi-zoom-in size="12" v-show="currentPage.modifiers.zoom > 1"></fi-zoom-in>
-              <fi-zoom-out size="12" v-show="currentPage.modifiers.zoom < 1"></fi-zoom-out>
-              {{ (currentPage.modifiers.zoom * 100) | number }}%
-            </span>
-
-            <!-- Brightness level -->
-            <span class="brightness-level mr-2 text-yellow flex items-center"
-              :title="`Current brightness is ${currentPage.modifiers.brightness}%`"
-              v-show="currentPage.modifiers.brightness !== 100 && isModifiable"
-            >
-              <fi-sunrise size="12" v-show="currentPage.modifiers.brightness > 100"></fi-sunrise>
-              <fi-sunset size="12" v-show="currentPage.modifiers.brightness < 100"></fi-sunset>
-              {{ currentPage.modifiers.brightness }}%
-            </span>
-
-            <!-- Disable all the effects -->
-            <span class="disable-modifiers cursor-pointer" @click="toggleModifiers()">
-              <fi-power size="12"></fi-power>
-            </span>
-          </div>
-        </transition>
+        <active-modifiers v-bind="currentPage.modifiers" @toggle="toggleModifiers"></active-modifiers>
 
         <!-- Pages -->
         <reader-page :ref="'page'+$index" v-for="(page, $index) in pages" :key="$index"
