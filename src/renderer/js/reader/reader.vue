@@ -3,6 +3,7 @@ import fs from 'fs';
 import { db } from 'support';
 import readerPage from './reader-page.vue';
 import readerToolbar from './reader-toolbar.vue';
+import readerNavigation from './reader-navigation.vue';
 import activeModifiers from './active-modifiers.vue';
 import dragscroll from 'dragscroll';
 import { ipcRenderer } from 'electron';
@@ -13,6 +14,7 @@ export default {
   components: {
     readerPage,
     readerToolbar,
+    readerNavigation,
     activeModifiers,
   },
 
@@ -46,13 +48,8 @@ export default {
   },
 
   methods: {
-    nextImage() {
-      this.currentIndex = Math.min(this.files.length - 1, this.currentIndex + 1);
-      this.saveHistory();
-    },
-
-    previousImage() {
-      this.currentIndex = Math.max(0, this.currentIndex - 1);
+    goToPage(page) {
+      this.currentIndex = page - 1;
       this.saveHistory();
     },
 
@@ -209,63 +206,17 @@ export default {
     <div class="pages-container" :class="[
         currentTool ? `tool-${currentTool}`: null,
         isDragging ? 'dragging' : null,
-      ]" @mousedown="isDragging = true" @mouseup="isDragging = false">
-      <div class="pages-info-bar" :class="{ expanded: isThumbnailExpanded }">
-        <!-- Previous -->
-        <button class="tool" style="height: 24px;" title="Previous page" @click="previousImage()">
-          <fi-chevron-left></fi-chevron-left>
-        </button>
+      ]">
 
-        <!-- Current page / Number of pages -->
-        <span class="tool text-sm page-number" title="Page number">
-          {{ currentIndex + 1 }} <span v-show="currentMode === 'split' && currentIndex < files.length - 1"> - {{ currentIndex + 2 }}</span> <span class="text-grey-darker">/ {{ files.length }}</span>
-        </span>
+      <!-- Bottom navigation -->
+      <reader-navigation @navigate="goToPage" :active="[currentIndex + 1]"
+        :total="pages.length"></reader-navigation>
 
-        <!-- Next -->
-        <button class="tool" style="height: 24px;" title="Next page" @click="nextImage()">
-          <fi-chevron-right></fi-chevron-right>
-        </button>
-
-        <button class="tool" style="height: 24px;" title="More options" @click="toggleThumbnails()">
-          <fi-chevron-up v-if="!isThumbnailExpanded"></fi-chevron-up>
-          <fi-chevron-down v-if="isThumbnailExpanded"></fi-chevron-down>
-        </button>
-      </div>
-
-      <!-- Thumbnails -->
-      <div class="thumbnails-list whitespace-no-wrap flex" :class="{expanded: isThumbnailExpanded}">
-        <ul class="list-reset overflow-hidden">
-          <li class="inline-block px-1" v-for="(image, $index) in files" :key="$index"
-            v-if="thumbnailInRange($index)"
-            :class="{
-              active: (currentIndex === $index) || (currentIndex + 1 === $index && currentMode === 'split')
-            }">
-            <img :src="image" height="60" />
-          </li>
-        </ul>
-
-        <div class="reading-modes flex flex-col justify-between ml-2">
-          <!-- Close the thumbnails -->
-          <button class="tool text-grey-dark hover:text-grey" @click="toggleThumbnails()">
-            <fi-x></fi-x>
-          </button>
-
-          <!-- Split mode -->
-          <button class="tool text-grey-dark hover:text-grey" title="Split mode"
-            @click="toggleCurrentMode('split')"
-            :class="{
-              active: currentMode === 'split'
-            }"
-          >
-            <fi-book-open></fi-book-open>
-          </button>
-        </div>
-      </div>
-
+      <!-- Pages of the comic -->
       <div class="pages" ref="pages" :class="[
         currentMode,
         (currentMode === 'split' && isDraggable) ? 'dragscroll' : null
-      ]">
+      ]" @mousedown="isDragging = true" @mouseup="isDragging = false">
         <!-- Current applied changes -->
         <active-modifiers v-bind="currentPage.modifiers" @toggle="toggleModifiers"></active-modifiers>
 
