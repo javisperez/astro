@@ -33,6 +33,11 @@ app.on('ready', () => {
   // Start a background process listener
   child.create();
 
+  // Install devtools
+  if (process.env.NODE_ENV !== 'production') {
+    require('vue-devtools').install()
+  }
+
   win.once('ready-to-show', () => {
     window.show();
 
