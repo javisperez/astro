@@ -1,14 +1,17 @@
 <script>
 import fs from 'fs';
 import { db } from 'support';
-import page from './page.vue';
+import readerPage from './reader-page.vue';
+import readerToolbar from './reader-toolbar.vue';
+import dragscroll from 'dragscroll';
 import { ipcRenderer } from 'electron';
 
 export default {
   name: 'reader',
 
   components: {
-    page
+    readerPage,
+    readerToolbar,
   },
 
   props: {
@@ -25,7 +28,7 @@ export default {
       isTransitioning: false,
       isThumbnailExpanded: false,
       isModifiable: true,
-      currentBrightness: 100,
+      isDragging: false,
     };
   },
 
@@ -34,31 +37,6 @@ export default {
     ipcRenderer.send('menu:show', 'tools');
     ipcRenderer.send('menu:enable', 'add-to-bookmark');
     ipcRenderer.send('menu:enable', 'close-file');
-
-    // Listen for the tools menu click
-    ipcRenderer.on('tools:tool', (e, tool) => {
-      switch(tool) {
-        case 'zoom-in':
-          this.setZoom(0.2);
-          break;
-
-        case 'zoom-out':
-          this.setZoom(-0.2);
-          break;
-
-        case 'brightness-up':
-          this.setBrightness(this.currentBrightness + 10);
-          break;
-
-        case 'brightness-down':
-          this.setBrightness(this.currentBrightness - 10);
-          break;
-
-        default:
-          this.toggleTool(tool);
-          break;
-      }
-    });
   },
 
   beforeDestroy() {
@@ -74,14 +52,6 @@ export default {
     previousImage() {
       this.currentIndex = Math.max(0, this.currentIndex - 1);
       this.saveHistory();
-    },
-
-    toggleTool(tool = null) {
-      if (this.currentTool === tool) {
-        this.currentTool = null;
-      } else {
-        this.currentTool = tool;
-      }
     },
 
     toggleCurrentMode(mode = 'default') {
@@ -163,35 +133,23 @@ export default {
     },
 
     thumbnailInRange(index) {
-      if (index > this.currentIndex - 5 && index < this.currentIndex + 5) {
-        return true;
-      }
+      let from = this.currentIndex - 5;
+      let to = this.currentIndex + 5;
 
-      return false;
-    },
-
-    setBrightness(brightness = 100) {
-      this.currentBrightness = Math.max(0, Math.min(200, brightness));
-
-      this.pages.forEach(page => {
-        page.brightness = this.currentBrightness;
-      })
-    },
-
-    setZoom(delta = 0) {
       if (this.currentMode === 'split') {
-        return;
+        from += 1;
       }
 
-      const currentPage = this.pages[this.currentIndex];
-      const zoom = currentPage.zoom.level + delta;
-
-      currentPage.zoom.level = Math.min(3, Math.max(0.5, zoom.toFixed(2)));
+      return (index > from && index < to);
     },
 
     toggleModifiers() {
       this.isModifiable = !this.isModifiable;
     },
+
+    applyModifiers(modifiers) {
+      this.pages[this.currentIndex].modifiers = { ...modifiers };
+    }
   },
 
   watch: {
@@ -207,16 +165,23 @@ export default {
         value.forEach(file => {
           pages.push({
             file,
-            brightness: 100,
-            zoom: {
-              x: 0,
-              y: 0,
-              level: 1,
-            }
+            modifiers: {
+              brightness: 100,
+              zoom: 1,
+            },
           });
         });
 
         this.pages = pages;
+      }
+    },
+
+    currentMode: {
+      immediate: true,
+      handler(value) {
+        this.$nextTick(() => {
+          dragscroll.reset();
+        });
       }
     },
   },
@@ -226,76 +191,31 @@ export default {
       return this.pages[this.currentIndex];
     },
 
-    haveActiveModifiers() {
-      return this.currentBrightness !== 100 || this.currentPage.zoom.level !== 1;
-    },
-
     isDraggable() {
-      return this.currentTool === 'drag' && this.currentMode !== 'split';
+      return this.currentTool === 'drag';
     }
   },
+
+  filters: {
+    number(input, decimals = 2) {
+      return input.toFixed(decimals);
+    }
+  }
 }
 </script>
 
 <template>
   <div class="reader">
     <!-- toolbar -->
-    <div class="toolbar">
-      <div class="tools">
-        <!-- Move -->
-        <button class="tool" title="Drag" @click="toggleTool('drag')"
-          :class="{
-            active: currentTool === 'drag',
-          }"
-        >
-          <fi-move></fi-move>
-        </button>
-
-        <!-- Zoom in -->
-        <button class="tool" title="Zoom In" @click="setZoom(0.2)"
-          :class="{
-            applied: currentPage.zoom.level > 1,
-            disabled: currentMode === 'split',
-          }"
-        >
-          <fi-zoom-in></fi-zoom-in>
-        </button>
-
-        <!-- Zoom out -->
-        <button class="tool" title="Zoom Out" @click="setZoom(-0.2)"
-          :class="{
-            applied: currentPage.zoom.level < 1,
-            disabled: currentMode === 'split',
-          }"
-        >
-          <fi-zoom-out></fi-zoom-out>
-        </button>
-
-        <!-- Sunrise (brightness up) -->
-        <button class="tool push-btn" title="Brightness up"
-          @click="setBrightness(currentBrightness + 10)"
-          :class="{
-            applied: currentBrightness > 100,
-          }"
-        >
-          <fi-sunrise></fi-sunrise>
-        </button>
-
-        <!-- Sunset (brightness down) -->
-        <button class="tool push-btn" title="Brightness down"
-          @click="setBrightness(currentBrightness - 10)"
-          :class="{
-            applied: currentBrightness < 100,
-          }"
-        >
-          <fi-sunset></fi-sunset>
-        </button>
-      </div>
-    </div>
+    <reader-toolbar v-model="currentTool" v-bind="currentPage.modifiers"
+      @modified="applyModifiers"></reader-toolbar>
 
     <!-- The pages -->
-    <div class="pages-container" :class="[currentTool ? `tool-${currentTool}`: null]">
-      <div class="pages-info-bar" :class="{'expanded': isThumbnailExpanded}">
+    <div class="pages-container" :class="[
+        currentTool ? `tool-${currentTool}`: null,
+        isDragging ? 'dragging' : null,
+      ]" @mousedown="isDragging = true" @mouseup="isDragging = false">
+      <div class="pages-info-bar" :class="{ expanded: isThumbnailExpanded }">
         <!-- Previous -->
         <button class="tool" style="height: 24px;" title="Previous page" @click="previousImage()">
           <fi-chevron-left></fi-chevron-left>
@@ -318,7 +238,7 @@ export default {
       </div>
 
       <!-- Thumbnails -->
-      <div class="thumbnails-list whitespace-no-wrap flex" :class="{'expanded': isThumbnailExpanded}">
+      <div class="thumbnails-list whitespace-no-wrap flex" :class="{expanded: isThumbnailExpanded}">
         <ul class="list-reset overflow-hidden">
           <li class="inline-block px-1" v-for="(image, $index) in files" :key="$index"
             v-if="thumbnailInRange($index)"
@@ -347,33 +267,36 @@ export default {
         </div>
       </div>
 
-      <div class="pages" ref="pages" :class="currentMode">
+      <div class="pages" ref="pages" :class="[
+        currentMode,
+        (currentMode === 'split' && isDraggable) ? 'dragscroll' : null
+      ]">
         <!-- Current applied changes -->
         <transition name="slide-right">
           <div class="active-modifiers z-10 absolute bg-ebony border-blue-darker
             border text-blue-light text-sm py-1 px-2 pin-r mt-8 mr-4 rounded-lg shadow
             cursor-default flex items-center"
             :class="{'opacity-50 hover:opacity-100': isModifiable, 'opacity-100': !isModifiable}"
-            v-if="haveActiveModifiers"
+            v-if="false"
           >
             <!-- Zoom level -->
             <span class="zoom-level mr-2 text-sienna flex items-center"
-              :title="`Current zoom is ${currentPage.zoom.level * 100}%`"
-              v-show="currentPage.zoom.level !== 1 && isModifiable"
+              :title="`Current zoom is ${currentPage.modifiers.zoom * 100}%`"
+              v-show="currentPage.modifiers.zoom !== 1 && isModifiable"
             >
-              <fi-zoom-in size="12" v-show="currentPage.zoom.level > 1"></fi-zoom-in>
-              <fi-zoom-out size="12" v-show="currentPage.zoom.level < 1"></fi-zoom-out>
-              {{ currentPage.zoom.level * 100 }}%
+              <fi-zoom-in size="12" v-show="currentPage.modifiers.zoom > 1"></fi-zoom-in>
+              <fi-zoom-out size="12" v-show="currentPage.modifiers.zoom < 1"></fi-zoom-out>
+              {{ (currentPage.modifiers.zoom * 100) | number }}%
             </span>
 
             <!-- Brightness level -->
             <span class="brightness-level mr-2 text-yellow flex items-center"
-              :title="`Current brightness is ${currentBrightness}%`"
-              v-show="currentBrightness !== 100 && isModifiable"
+              :title="`Current brightness is ${currentPage.modifiers.brightness}%`"
+              v-show="currentPage.modifiers.brightness !== 100 && isModifiable"
             >
-              <fi-sunrise size="12" v-show="currentBrightness > 100"></fi-sunrise>
-              <fi-sunset size="12" v-show="currentBrightness < 100"></fi-sunset>
-              {{ currentBrightness }}%
+              <fi-sunrise size="12" v-show="currentPage.modifiers.brightness > 100"></fi-sunrise>
+              <fi-sunset size="12" v-show="currentPage.modifiers.brightness < 100"></fi-sunset>
+              {{ currentPage.modifiers.brightness }}%
             </span>
 
             <!-- Disable all the effects -->
@@ -384,10 +307,9 @@ export default {
         </transition>
 
         <!-- Pages -->
-        <div v-for="(page, $index) in pages" :key="$index">
-          <page :ref="'page'+$index" v-if="isVisible($index)" :data="page"
-            :modifiable="isModifiable" :draggable="isDraggable"></page>
-        </div>
+        <reader-page :ref="'page'+$index" v-for="(page, $index) in pages" :key="$index"
+          v-if="isVisible($index)" :data="page"
+          :modifiable="isModifiable" :draggable="isDraggable"></reader-page>
       </div>
     </div>
   </div>

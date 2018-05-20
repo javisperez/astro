@@ -2,7 +2,7 @@
   .reader {
     @apply .flex;
 
-    .toolbar {
+    .reader-toolbar {
       @apply .bg-ebony-darkest .p-1 .text-sm;
       width: 82px;
       padding-top: 60px;
@@ -83,6 +83,10 @@
 
       &.tool-drag {
         cursor: grab;
+
+        &.dragging {
+          cursor: grabbing;
+        }
       }
 
       .pages-info-bar {
@@ -177,7 +181,7 @@
           @apply .flex-1 .opacity-0 .overflow-auto;
 
           height: 100vh;
-          max-width: 100%;
+          // width: calc(100vw - 80px);
           transition: opacity 400ms;
 
           &.visible {
