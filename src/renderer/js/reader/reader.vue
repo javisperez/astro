@@ -148,7 +148,7 @@ export default {
     },
 
     applyModifiers(modifiers) {
-      this.pages[this.currentIndex].modifiers = { ...modifiers };
+      this.currentPage.modifiers = { ...modifiers };
     }
   },
 
