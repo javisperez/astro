@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import mkdirp from 'mkdirp';
-import { remote, ipcRenderer } from 'electron';
+import { remote } from 'electron';
 
 const { BrowserWindow } = remote;
 
@@ -65,7 +65,7 @@ class Process {
           </script>
           <script src="file://${remote.app.getAppPath()}/dist/js/${filepath}"></script>
         </head>
-        <body>THIS IS A CHILD PROCESS</body>
+        <body></body>
       </html>
     `;
     const index = `${path.join(processes, this.id.toString())}.html`;
