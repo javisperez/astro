@@ -3,9 +3,12 @@ export default {
   name: 'reader-navigation-thumbanils',
 
   props: {
-    currentPage: {
-      type: Number,
+    active: {
+      type: Array,
       required: true,
+      default() {
+        return [];
+      },
     },
 
     pages: {
@@ -16,32 +19,17 @@ export default {
 </script>
 
 <template>
-<div class="thumbnails-list whitespace-no-wrap flex" :class="{expanded: isThumbnailExpanded}">
+<div class="reader-navigation-thumbnails whitespace-no-wrap flex">
   <ul class="list-reset overflow-hidden">
     <li class="inline-block px-1" v-for="(page, $index) in pages" :key="$index"
-      v-if="thumbnailInRange($index)"
-      :class="{
-        active: (currentIndex === $index) || (currentIndex + 1 === $index && currentMode === 'split')
-      }">
-      <img :src="page" height="60" />
+      :class="{ active: active.includes($index + 1) }">
+      <img :src="page.file" height="60" />
     </li>
   </ul>
 
+  <!-- Pass any additional icon as slot -->
   <div class="reading-modes flex flex-col justify-between ml-2">
-    <!-- Close the thumbnails -->
-    <button class="tool text-grey-dark hover:text-grey" @click="toggleThumbnails()">
-      <fi-x></fi-x>
-    </button>
-
-    <!-- Split mode -->
-    <button class="tool text-grey-dark hover:text-grey" title="Split mode"
-      @click="toggleCurrentMode('split')"
-      :class="{
-        active: currentMode === 'split'
-      }"
-    >
-      <fi-book-open></fi-book-open>
-    </button>
+    <slot></slot>
   </div>
 </div>
 </template>

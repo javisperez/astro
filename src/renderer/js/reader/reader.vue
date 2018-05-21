@@ -53,7 +53,7 @@ export default {
       this.saveHistory();
     },
 
-    toggleCurrentMode(mode = 'default') {
+    toggleReadingMode(mode = 'default') {
       this.currentTool = null;
 
       if (this.isTransitioning) {
@@ -91,9 +91,9 @@ export default {
       });
     },
 
-    toggleThumbnails() {
-      this.isThumbnailExpanded = !this.isThumbnailExpanded;
-    },
+    // toggleThumbnails() {
+    //   this.isThumbnailExpanded = !this.isThumbnailExpanded;
+    // },
 
     isVisible(index) {
       if (index === this.currentIndex) {
@@ -131,16 +131,16 @@ export default {
       localStorage.setItem(`${this.metadata.key}-current-mode`, this.currentMode);
     },
 
-    thumbnailInRange(index) {
-      let from = this.currentIndex - 5;
-      let to = this.currentIndex + 5;
+    // thumbnailInRange(index) {
+    //   let from = this.currentIndex - 5;
+    //   let to = this.currentIndex + 5;
 
-      if (this.currentMode === 'split') {
-        from += 1;
-      }
+    //   if (this.currentMode === 'split') {
+    //     from += 1;
+    //   }
 
-      return (index > from && index < to);
-    },
+    //   return (index > from && index < to);
+    // },
 
     toggleModifiers() {
       this.isModifiable = !this.isModifiable;
@@ -148,7 +148,7 @@ export default {
 
     applyModifiers(modifiers) {
       this.currentPage.modifiers = { ...modifiers };
-    }
+    },
   },
 
   watch: {
@@ -209,8 +209,8 @@ export default {
       ]">
 
       <!-- Bottom navigation -->
-      <reader-navigation @navigate="goToPage" :active="[currentIndex + 1]"
-        :total="pages.length"></reader-navigation>
+      <reader-navigation @navigate="goToPage" @mode="toggleReadingMode"
+          :active="[currentIndex + 1]" :pages="pages"></reader-navigation>
 
       <!-- Pages of the comic -->
       <div class="pages" ref="pages" :class="[

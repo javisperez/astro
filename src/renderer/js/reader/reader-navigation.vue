@@ -16,16 +16,17 @@ export default {
         return [1];
       },
     },
-    total: {
-      type: Number,
+    pages: {
+      type: Array,
       required: true,
-      default: 1,
     }
   },
 
   data() {
     return {
       page: this.active[0],
+      isThumbnailExpanded: false,
+      isSplitMode: false,
     };
   },
 
@@ -39,6 +40,10 @@ export default {
       this.page = Math.max(1, this.page - 1);
       this.$emit('navigate', this.page);
     },
+
+    toggleSplitMode() {
+      this.isSplitMode = !this.isSplitMode;
+    }
   },
 
   computed: {
@@ -48,13 +53,17 @@ export default {
 
     activePages() {
       return this.active.join(' - ');
-    }
+    },
+
+    total() {
+      return this.pages.length;
+    },
   }
 }
 </script>
 
 <template>
-<div class="reader-navigation">
+<div class="reader-navigation" :class="{ expanded: isThumbnailExpanded }">
   <div class="pages-info-bar">
     <!-- Previous page -->
     <button class="tool" style="height: 24px;" title="Previous page" @click="previousPage()">
@@ -72,13 +81,26 @@ export default {
     </button>
 
     <!-- Toogle Thumbnails -->
-    <button class="tool" style="height: 24px;" title="More options" @click="toggleThumbnails()">
-      <fi icon="chevron-up"></fi>
-      <!-- <fi-chevron-down v-if="isThumbnailExpanded"></fi-chevron-down> -->
+    <button class="tool" style="height: 24px;" title="More options"
+      @click="isThumbnailExpanded = !isThumbnailExpanded">
+      <fi :icon="!isThumbnailExpanded ? 'chevron-up' : 'chevron-down'"></fi>
     </button>
   </div>
 
   <!-- Navigation thumbnails -->
-  <!-- <reader-navigation-thumbnails></reader-navigation-thumbnails> -->
+  <transition name="slide-up">
+    <reader-navigation-thumbnails :active="active" :pages="pages" v-show="isThumbnailExpanded">
+      <!-- Close the thumbnails -->
+      <button class="tool text-grey-dark hover:text-grey" @click="isThumbnailExpanded = false">
+        <fi-x></fi-x>
+      </button>
+
+      <!-- Split mode -->
+      <button class="tool text-grey-dark hover:text-grey" title="Split mode"
+        @click="toggleSplitMode" :class="{active: isSplitMode}">
+        <fi-book-open></fi-book-open>
+      </button>
+    </reader-navigation-thumbnails>
+  </transition>
 </div>
 </template>

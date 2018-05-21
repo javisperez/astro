@@ -1,0 +1,36 @@
+.reader-navigation-thumbnails {
+  @apply .bg-black .absolute;
+
+  padding: 10px;
+  border-radius: 10px;
+  bottom: 10px;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, 0);
+  transition: transform 0.4s;
+
+  li.active {
+    border: 2px solid white;
+  }
+
+  .reading-modes {
+    .tool {
+      &:hover,
+      &:active,
+      &:focus {
+        outline: none;
+      }
+
+      &.active {
+        @apply .text-sienna;
+      }
+    }
+  }
+
+  &.slide-up {
+    &-enter,
+    &-leave-to {
+        transform: translate(-50%, 120%);
+    }
+  }
+}
