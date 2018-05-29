@@ -15,15 +15,11 @@
     "production": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "electron": "NODE_ENV=development npm run electron:mac",
     "electron:mac": "NODE_ENV=development node_modules/electron/dist/Electron.app/Contents/MacOS/Electron .",
-    "package": "NODE_ENV=production npm run build; npm run package:osx; npm run package:win; npm run package:linux;",
-    "package:osx": "NODE_ENV=production electron-packager . Astro --platform=darwin --arch=x64 --icon=assets/app.icns --out=package --asar=true --overwrite=force",
-    "package:win": "NODE_ENV=production electron-packager . Astro --platform=win32 --arch=ia32 --icon=assets/app.ico --out=package --asar=true --overwrite=force",
-    "package:linux": "NODE_ENV=production electron-packager . Astro --platform=linux --arch=ia32 --icon=assets/app.ico --out=package --asar=true --overwrite=force",
     "pack": "NODE_ENV=production electron-builder --dir",
-    "build": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder -mwl",
-    "build:mac": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --mac",
-    "build:win": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --win",
-    "build:linux": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --linux"
+    "package": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder -mwl",
+    "package:mac": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --mac",
+    "package:win": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --win",
+    "package:linux": "NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --linux"
   },
   "dependencies": {
     "adm-zip": "^0.4.7",

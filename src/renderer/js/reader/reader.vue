@@ -91,10 +91,6 @@ export default {
       });
     },
 
-    // toggleThumbnails() {
-    //   this.isThumbnailExpanded = !this.isThumbnailExpanded;
-    // },
-
     isVisible(index) {
       if (index === this.currentIndex) {
         return true;
@@ -130,17 +126,6 @@ export default {
       localStorage.setItem(`${this.metadata.key}-current-index`, this.currentIndex);
       localStorage.setItem(`${this.metadata.key}-current-mode`, this.currentMode);
     },
-
-    // thumbnailInRange(index) {
-    //   let from = this.currentIndex - 5;
-    //   let to = this.currentIndex + 5;
-
-    //   if (this.currentMode === 'split') {
-    //     from += 1;
-    //   }
-
-    //   return (index > from && index < to);
-    // },
 
     toggleModifiers() {
       this.isModifiable = !this.isModifiable;
@@ -192,6 +177,18 @@ export default {
 
     isDraggable() {
       return this.currentTool === 'drag';
+    },
+
+    visiblePages() {
+      let pages = [this.currentIndex + 1];
+
+      if (this.currentMode === 'split') {
+        pages.push(this.currentIndex + 2);
+      }
+
+      pages = pages.map(p => Math.min(p, this.pages.length));
+
+      return pages;
     }
   },
 }
@@ -200,7 +197,8 @@ export default {
 <template>
   <div class="reader">
     <!-- toolbar -->
-    <reader-toolbar v-model="currentTool" v-bind="currentPage.modifiers" @modified="applyModifiers"></reader-toolbar>
+    <reader-toolbar v-model="currentTool" :disabled="currentMode === 'split' ? ['zoom'] : []"
+      v-bind="currentPage.modifiers" @modified="applyModifiers"></reader-toolbar>
 
     <!-- The pages -->
     <div class="pages-container" :class="[
@@ -209,14 +207,14 @@ export default {
       ]">
 
       <!-- Bottom navigation -->
-      <reader-navigation @navigate="goToPage" @mode="toggleReadingMode"
-          :active="[currentIndex + 1]" :pages="pages"></reader-navigation>
+      <reader-navigation @navigate="goToPage" :mode="currentMode" @mode="toggleReadingMode"
+        :active="visiblePages" :pages="pages"></reader-navigation>
 
       <!-- Pages of the comic -->
       <div class="pages" ref="pages" :class="[
-        currentMode,
-        (currentMode === 'split' && isDraggable) ? 'dragscroll' : null
-      ]" @mousedown="isDragging = true" @mouseup="isDragging = false">
+          currentMode,
+          (currentMode === 'split' && isDraggable) ? 'dragscroll' : null
+        ]" @mousedown="isDragging = true" @mouseup="isDragging = false">
         <!-- Current applied changes -->
         <active-modifiers v-bind="currentPage.modifiers" @toggle="toggleModifiers"></active-modifiers>
 

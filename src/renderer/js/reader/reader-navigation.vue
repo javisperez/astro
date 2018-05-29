@@ -9,24 +9,16 @@ export default {
   },
 
   props: {
-    active: {
-      type: Array,
-      required: true,
-      default() {
-        return [1];
-      },
-    },
-    pages: {
-      type: Array,
-      required: true,
-    }
+    active: { type: Array, required: true, default: () => [1] },
+    pages: { type: Array, required: true },
+    mode: { type: String, default: 'default' }
   },
 
   data() {
     return {
       page: this.active[0],
       isThumbnailExpanded: false,
-      isSplitMode: false,
+      isSplitMode: (this.mode === 'split'),
     };
   },
 
@@ -43,6 +35,7 @@ export default {
 
     toggleSplitMode() {
       this.isSplitMode = !this.isSplitMode;
+      this.$emit('mode', 'split');
     }
   },
 

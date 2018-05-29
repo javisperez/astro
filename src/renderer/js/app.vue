@@ -144,6 +144,7 @@ export default {
   </div>
 
   <!-- Loading -->
-  <loading-screen :done="!!files.length" :error="extractFailed" key="content" v-else></loading-screen>
+  <loading-screen @open="openFile" :done="!!files.length" :error="extractFailed"
+    key="content" v-else></loading-screen>
 </div>
 </template>

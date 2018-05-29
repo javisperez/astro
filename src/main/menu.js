@@ -154,13 +154,13 @@ const template = [
           win.webContents.send('bookmarks:add');
         }
       },
-      {
-        label: 'Manage Bookmarks',
-        accelerator: 'CmdOrCtrl+Shift+B',
-        click() {
-          win.webContents.send('bookmarks:manage');
-        }
-      },
+      // {
+      //   label: 'Manage Bookmarks',
+      //   accelerator: 'CmdOrCtrl+Shift+B',
+      //   click() {
+      //     win.webContents.send('bookmarks:manage');
+      //   }
+      // },
       { type: 'separator' }
     ]
   },

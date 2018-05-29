@@ -7,7 +7,7 @@
   left: 50%;
   z-index: 2;
   transform: translate(-50%, 0);
-  transition: transform 0.4s;
+  // width: 460px;
 
   li.active {
     border: 2px solid white;
@@ -28,6 +28,11 @@
   }
 
   &.slide-up {
+    &-enter-active,
+    &-leave-active {
+      transition: transform .4s;
+    }
+
     &-enter,
     &-leave-to {
         transform: translate(-50%, 120%);

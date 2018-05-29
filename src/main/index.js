@@ -9,14 +9,14 @@ const main = {
 };
 
 let win = null;
-let macQueue = '';
+let fileToOpen = '';
 
 app.on('open-file', (e, path) => {
   e.preventDefault();
-  macQueue = path;
+  fileToOpen = path;
 
   if (win) {
-    win.webContents.send('file:open', macQueue);
+    win.webContents.send('file:open', fileToOpen);
   }
 });
 
@@ -41,8 +41,12 @@ app.on('ready', () => {
   win.once('ready-to-show', () => {
     window.show();
 
-    if (macQueue) {
-      win.webContents.send('file:open', macQueue);
+    if (process.platform === 'win32' && process.argv.length >= 2) {
+      fileToOpen = process.argv[1];
+    }
+
+    if (fileToOpen) {
+      win.webContents.send('file:open', fileToOpen);
     }
   });
 });

@@ -58,7 +58,7 @@ export default {
     <fi-x size="62"></fi-x>
 
     <div>
-      Oh snaps! that doesn't seems like a valid comic file.
+      Oh snaps! that's not a valid comic file. Please <span class="cursor-pointer underline text-brick hover:text-brick-lightest" @click="$emit('open', null)">open another file.</span>
     </div>
   </div>
 </div>
