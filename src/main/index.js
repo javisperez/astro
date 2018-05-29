@@ -34,8 +34,10 @@ app.on('ready', () => {
   child.create();
 
   // Install devtools
-  if (process.env.NODE_ENV !== 'production') {
-    require('vue-devtools').install()
+  if (process.env.NODE_ENV === 'development') {
+    console.log('--- Vue-devtools ----------------------------------------------------');
+    require('vue-devtools').install();
+    console.log('---------------------------------------------------------------------');
   }
 
   win.once('ready-to-show', () => {
