@@ -62,13 +62,18 @@ export default {
       }
 
       return this.bookmarks.filter(r => r.path.toLowerCase().includes(this.search.toLowerCase()))
+    },
+
+    platform() {
+      return process.platform;
     }
   }
 }
 </script>
 
 <template>
-<div class="home flex flex-col overflow-auto justify-start">
+<div class="home flex flex-col overflow-auto justify-start px-16 pb-16 pt-8"
+  :class="{'pt-16': platform === 'darwin'}">
   <!-- Logo -->
   <div class="branding-row w-full mb-8 mt-2">
     <div class="branding flex items-center">
@@ -118,12 +123,15 @@ export default {
       <h3 class="text-left text-xl font-light mb-6 flex items-center">
         <fi-folder class="mr-2"></fi-folder> Recently Open
       </h3>
-      <ul class="list-reset recent-list">
+      <ul class="list-reset recent-list" v-if="filteredRecent.length" key="recent-list">
         <li v-for="file in filteredRecent" :key="file.id" @click="openFile(file.path)" class="cursor-pointer text-grey-darkest text-lg mb-4">
           <span class="text-yellow-lighter mr-6">{{ file.title }}</span> {{ getShortPath(file) }}
         </li>
-        <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile()">Another file?</li>
+        <li class="cursor-pointer text-lg text-yellow-dark hover:text-yellow" @click="openFile()">{{ filteredRecent.length ? 'Another file?' : 'Open a file'}}</li>
       </ul>
+      <div v-else key="recent-list">
+        No file was open recently
+      </div>
     </div>
 
     <div class="right-pane w-1/3 pl-2">
