@@ -2,9 +2,14 @@ const { ipcMain } = require('electron');
 const menu = require('./menu');
 const bg = require('./background');
 const win = require('./window');
+const { autoUpdater } = require('electron-updater');
 
 module.exports = {
   listen() {
+    ipcMain.on('quitAndInstall', (e, arg) => {
+      autoUpdater.quitAndInstall();
+    });
+
     ipcMain.on('background:import', (e, path) => {
       bg.send('background:import', path);
     });

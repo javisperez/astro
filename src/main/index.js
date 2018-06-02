@@ -3,6 +3,7 @@ const window = require('./window');
 const menu = require('./menu');
 const ipc = require('./ipc');
 const child = require('./background');
+const { autoUpdater } = require('electron-updater');
 
 const main = {
   window: null,
@@ -40,6 +41,11 @@ app.on('ready', () => {
     console.log('---------------------------------------------------------------------');
   }
 
+  // Check if theres any update available
+  if (process.env.NODE_ENV === 'production') {
+    autoUpdater.checkForUpdates();
+  }
+
   win.once('ready-to-show', () => {
     window.show();
 
@@ -51,6 +57,11 @@ app.on('ready', () => {
       win.webContents.send('file:open', fileToOpen);
     }
   });
+});
+
+// when the update has been downloaded and is ready to be installed, notify the BrowserWindow
+autoUpdater.on('update-downloaded', () => {
+  win.webContents.send('updateReady');
 });
 
 app.on('window-all-closed', () => {

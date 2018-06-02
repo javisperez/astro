@@ -35,6 +35,7 @@ export default {
       title: '',
       currentPage: 0,
       extractFailed: false,
+      newVersionAvailable: false,
     };
   },
 
@@ -62,6 +63,10 @@ export default {
       db.bookmarks.toArray().then(bookmarks => {
         ipcRenderer.send('bookmarks:update', bookmarks);
       });
+    });
+
+    ipcRenderer.on('update:ready', _ => {
+      this.newVersionAvailable = true;
     });
   },
 
@@ -124,6 +129,15 @@ export default {
         win.unmaximize();
       }
     },
+
+    installUpdate() {
+      ipcRenderer.send('quitAndInstall');
+    }
+  },
+  computed: {
+    platform() {
+      return process.platform;
+    }
   }
 };
 </script>
@@ -132,10 +146,20 @@ export default {
 <div class="app window">
   <!-- Invisible and draggable title bar -->
   <div class="titlebar draggable" :class="{'bg-black': !files.length}"
-    @dblclick="maximizeWindow()"></div>
+    @dblclick="maximizeWindow()" v-if="platform === 'darwin'"></div>
 
   <!-- App content -->
   <div class="content" v-if="!isExtracting && !extractFailed" key="content">
+    <!-- Update available -->
+    <div class="bg-blue-lighter text-center absolute pin-t pin-l pin-r p-1 z-10 text-sm"
+      :class="{'mt-8': platform === 'darwin'}" v-if="newVersionAvailable">
+      New version available! <button
+        class="p-1 px-2 ml-2 text-white rounded bg-blue cursor-pointer hover:bg-blue-dark"
+        @click="installUpdate()"
+        >Restart & Install</button>
+      <fi-x class="float-right" @click="newVersionAvailable = false"></fi-x>
+    </div>
+
     <!-- Welcome screen -->
     <welcome @open="openFile" v-if="!files.length" key="welcome"></welcome>
 

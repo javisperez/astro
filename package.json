@@ -15,11 +15,12 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "electron": "cross-env NODE_ENV=development npm run electron:mac",
     "electron:mac": "cross-env NODE_ENV=development node_modules/electron/dist/Electron.app/Contents/MacOS/Electron .",
+    "build": "cross-env NODE_ENV=production rm -r ./build/* && npm run production && build",
     "pack": "cross-env NODE_ENV=production electron-builder --dir",
-    "package": "cross-env NODE_ENV=production rm -r ./build/* && npm run production && electron-builder -mwl",
-    "package:mac": "cross-env NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --mac",
-    "package:win": "cross-env NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --win",
-    "package:linux": "cross-env NODE_ENV=production rm -r ./build/* && npm run production && electron-builder --linux"
+    "package": "electron-builder -mwl",
+    "release": "cross-env GH_TOKEN=9b26aeb2d662103ddd9ed53bac65c0ac01fdcf41 build -wml",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
@@ -27,6 +28,7 @@
     "dragscroll": "^0.0.8",
     "electron-editor-context-menu": "^1.1.1",
     "electron-unrar-js": "^1.0.1",
+    "electron-updater": "^2.21.10",
     "feather-icons": "^4.7.0",
     "glob-all": "^3.1.0",
     "laravel-mix": "^2.1.11",
@@ -66,8 +68,8 @@
           "cbr",
           "cbz"
         ],
-        "name": "Comic book file",
-        "description": "Comic book file",
+        "name": "Comic Book File",
+        "description": "Comic Book File",
         "icon": "icon.icns",
         "role": "Viewer"
       }
@@ -79,14 +81,29 @@
     ],
     "protocols": [
       {
-        "name": "Astro comic reader",
+        "name": "Astro Comic Reader",
         "schemes": [
           "astro"
         ]
       }
     ],
     "mac": {
-      "category": "your.app.category.type"
+      "target": "dmg",
+      "category": "public.app-category.entertainment"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "dmg": {
+      "title": "Astro"
     },
     "nsis": {
       "perMachine": true
