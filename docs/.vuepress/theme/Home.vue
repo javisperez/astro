@@ -68,6 +68,7 @@ export default {
 
   img {
     width: 100%;
+    box-shadow: 0 0 60px $black;
   }
 }
 
@@ -78,7 +79,7 @@ export default {
   max-width: $container-width;
   margin: px-to-rem(100px) auto;
   justify-content: space-between;
-  
+
   svg {
     color: $white;
   }
