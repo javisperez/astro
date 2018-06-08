@@ -1,8 +1,11 @@
 <template>
   <div class="home">
-    <h1 class="description">
-      {{ data.tagline || $description }}
+    <h1 class="title">
+      {{ $title }}
     </h1>
+    <p class="description">
+      {{ $description }}
+    </p>
     <div class="preview-screenshot" v-if="data.previewImage">
       <img :src="data.previewImage" :alt="data.tagline"/>
     </div>
@@ -47,16 +50,26 @@ export default {
 .home {
   text-align: center;
   padding: px-to-rem(10px);
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include desktop {
+    padding: 0;
+  }
 }
 
-.description {
-  font-size: $fs-lg;
-  font-weight: 100;
-  margin-bottom: px-to-rem(60px);
+.title {
+  font-weight: 300;
 
   @include desktop {
     font-size: $fs-xl;
   }
+}
+
+.description {
+  font-size: px-to-rem(20px);
+  margin-bottom: px-to-rem(60px);
 }
 
 .preview-screenshot {

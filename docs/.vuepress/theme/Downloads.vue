@@ -61,7 +61,7 @@ export default {
 
 .downloads {
   .action-button {
-    font-size: $fs-lg;
+    font-size: $fs-m;
     color: $white;
   }
 

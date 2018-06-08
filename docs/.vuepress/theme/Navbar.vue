@@ -28,8 +28,11 @@ export default {
   padding: px-to-rem(20px);
   padding-top: px-to-rem(40px);
   margin-bottom: px-to-rem(80px);
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
   color: $white;
+  max-width: 960px;
 }
 
 .home-link {
