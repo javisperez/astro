@@ -1,12 +1,13 @@
 <script>
 import fs from 'fs';
 import { db } from 'support';
-import readerPage from './reader-page.vue';
-import readerToolbar from './reader-toolbar.vue';
-import readerNavigation from './reader-navigation.vue';
-import activeModifiers from './active-modifiers.vue';
 import dragscroll from 'dragscroll';
 import { ipcRenderer } from 'electron';
+import readerPage from './reader-page.vue';
+import readerToolbar from './reader-toolbar.vue';
+import activeModifiers from './active-modifiers.vue';
+import readerNavigation from './reader-navigation.vue';
+import readerSettingsModal from './reader-settings-modal.vue';
 
 export default {
   name: 'reader',
@@ -14,8 +15,9 @@ export default {
   components: {
     readerPage,
     readerToolbar,
-    readerNavigation,
     activeModifiers,
+    readerNavigation,
+    readerSettingsModal,
   },
 
   props: {
@@ -23,16 +25,21 @@ export default {
     metadata: Object,
   },
 
+  created() {
+    this.getSettings();
+  },
+
   data() {
     return {
       pages: [],
+      settings: {},
       currentIndex: 0,
-      currentMode: 'default',
       currentTool: null,
-      isTransitioning: false,
-      isThumbnailExpanded: false,
-      isModifiable: true,
       isDragging: false,
+      isModifiable: true,
+      currentMode: 'default',
+      isTransitioning: false,
+      areSettingsOpen: false,
     };
   },
 
@@ -48,6 +55,22 @@ export default {
   },
 
   methods: {
+    openSettings() {
+      this.areSettingsOpen = true;
+    },
+
+    getSettings() {
+      db.settings.where('comic_id').equals(this.metadata.key).first()
+        .then(settings => {
+          this.settings = settings;
+        });
+    },
+
+    closeSettings() {
+      this.areSettingsOpen = false;
+      this.getSettings();
+    },
+
     goToPage(page) {
       this.currentIndex = page - 1;
       this.saveHistory();
@@ -149,6 +172,7 @@ export default {
         value.forEach(file => {
           pages.push({
             file,
+            key: this.metadata.key,
             modifiers: {
               brightness: 100,
               zoom: 1,
@@ -198,7 +222,8 @@ export default {
   <div class="reader">
     <!-- toolbar -->
     <reader-toolbar v-model="currentTool" :disabled="currentMode === 'split' ? ['zoom'] : []"
-      v-bind="currentPage.modifiers" @modified="applyModifiers"></reader-toolbar>
+      v-bind="currentPage.modifiers" @modified="applyModifiers"
+      @settings:open="openSettings" @settings:close="closeSettings"></reader-toolbar>
 
     <!-- The pages -->
     <div class="pages-container" :class="[
@@ -207,8 +232,8 @@ export default {
       ]">
 
       <!-- Bottom navigation -->
-      <reader-navigation @navigate="goToPage" :mode="currentMode" @mode="toggleReadingMode"
-        :active="visiblePages" :pages="pages"></reader-navigation>
+      <reader-navigation @navigate="goToPage"
+        :total-pages="pages.length" :current-page="currentIndex + 1"></reader-navigation>
 
       <!-- Pages of the comic -->
       <div class="pages" ref="pages" :class="[
@@ -220,9 +245,14 @@ export default {
 
         <!-- Pages -->
         <reader-page :ref="'page'+$index" v-for="(page, $index) in pages" :key="$index"
-          v-if="isVisible($index)" :data="page"
+          v-if="isVisible($index)" :data="page" :settings="settings"
           :modifiable="isModifiable" :draggable="isDraggable"></reader-page>
       </div>
+
+      <!-- Settings modal -->
+      <transition name="fade">
+        <reader-settings-modal v-if="areSettingsOpen" :preview="currentPage" @close="closeSettings"></reader-settings-modal>
+      </transition>
     </div>
   </div>
 </template>

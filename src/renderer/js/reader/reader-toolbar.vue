@@ -16,7 +16,7 @@ export default {
       modifiers: {
         zoom: this.zoom,
         brightness: this.brightness,
-      }
+      },
     };
   },
 
@@ -69,7 +69,11 @@ export default {
       }
       this.modifiers.brightness = Math.max(0, Math.min(200, brightness));
       this.$emit('modified', this.modifiers);
-    }
+    },
+
+    openSettings() {
+      this.$emit('settings:open');
+    },
   },
 
   watch: {
@@ -105,30 +109,15 @@ export default {
         <fi-move></fi-move>
       </button>
 
-      <!-- Zoom in -->
+      <!-- Zoom -->
       <button class="tool" title="Zoom In" @click="setZoom(0.2)"
         :class="{ applied: modifiers.zoom > 1, disabled: disabled.includes('zoom') }">
         <fi-zoom-in></fi-zoom-in>
       </button>
 
-      <!-- Zoom out -->
-      <button class="tool" title="Zoom Out" @click="setZoom(-0.2)"
-        :class="{ applied: modifiers.zoom < 1, disabled: disabled.includes('zoom') }">
-        <fi-zoom-out></fi-zoom-out>
-      </button>
-
-      <!-- Sunrise (brightness up) -->
-      <button class="tool push-btn" title="Brightness up"
-        @click="setBrightness(modifiers.brightness + 10)"
-        :class="{ applied: modifiers.brightness > 100, disabled: disabled.includes('brightness') }">
-        <fi-sunrise></fi-sunrise>
-      </button>
-
-      <!-- Sunset (brightness down) -->
-      <button class="tool push-btn" title="Brightness down"
-        @click="setBrightness(modifiers.brightness - 10)"
-        :class="{ applied: modifiers.brightness < 100, disabled: disabled.includes('brightness') }">
-        <fi-sunset></fi-sunset>
+      <!-- Settings -->
+      <button class="tool absolute pin-b" title="Settings" @click="openSettings">
+        <fi-sliders></fi-sliders>
       </button>
     </div>
   </div>

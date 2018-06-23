@@ -5,15 +5,17 @@ export default {
   name: 'reader-page',
 
   props: {
-    data: Object,
-    modifiable: {
-      type: Boolean,
-      default: true,
+    data: { type: Object },
+    modifiable: { type: Boolean, default: true, },
+    draggable: { type: Boolean, default: true, },
+    settings: {
+      type: Object,
+      default: {
+        brightness: 100,
+        contrast: 100,
+        flipped: false
+      }
     },
-    draggable: {
-      type: Boolean,
-      default: true,
-    }
   },
 
   data() {
@@ -44,62 +46,14 @@ export default {
 
   computed: {
     style() {
-      if (!this.modifiable) {
-        return '';
-      }
+      const style = {
+        filter: `
+          brightness(${this.settings.brightness / 100})
+          contrast(${this.settings.contrast / 100})
+        `,
+      };
 
-      const keys = ['filter', 'transform', 'transformOrigin'];
-
-      let styles = {};
-
-      let output = '';
-
-      keys.forEach(key => { styles[key] = {}; });
-
-      if (this.data.modifiers.brightness !== 100) {
-        styles.filter.brightness = `${Math.min(200, Math.max(0, this.data.modifiers.brightness))}%`;
-      }
-
-      if (this.data.modifiers.zoom !== 1) {
-        styles.transform.scale = this.data.modifiers.zoom;
-
-        if (this.data.modifiers.zoom < 1) {
-          styles.transformOrigin = '50% 0';
-        }
-      }
-
-      // Parse the styles
-      keys.forEach(key => {
-        const properties = styles[key];
-
-        output += `${key}: `;
-
-        if (typeof properties === 'object') {
-          Object.keys(properties).forEach((property) => {
-            output += `${property}(${properties[property]})`;
-          });
-        } else {
-          output += properties;
-        }
-
-        output += '; ';
-      });
-
-      if (this.$el) {
-        const img = this.$el.querySelector('img');
-        // Force the browser to "redraw" the scrollbars
-        // After the animation end
-        img.addEventListener('transitionend', _ => {
-          if (this.data.modifiers.zoom >= 1) {
-            img.style.transformOrigin = '0 0';
-          }
-          this.$el.style.display = 'none';
-          this.$el.offsetHeight;
-          this.$el.style.display = 'block';
-        }, false);
-      }
-
-      return output;
+      return style;
     }
   },
 
@@ -111,7 +65,7 @@ export default {
           dragscroll.reset();
         });
       }
-    }
+    },
   }
 }
 </script>

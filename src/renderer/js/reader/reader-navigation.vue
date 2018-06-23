@@ -1,99 +1,71 @@
 <script>
-import readerNavigationThumbnails from './reader-navigation-thumbnails.vue';
-
 export default {
   name: 'reader-navigation',
 
-  components: {
-    readerNavigationThumbnails,
-  },
-
   props: {
-    active: { type: Array, required: true, default: () => [1] },
-    pages: { type: Array, required: true },
-    mode: { type: String, default: 'default' }
+    totalPages: {
+      type: Number,
+    },
+
+    currentPage: {
+      type: Number,
+    },
   },
 
   data() {
     return {
-      page: this.active[0],
-      isThumbnailExpanded: false,
-      isSplitMode: (this.mode === 'split'),
+      page: this.currentPage,
     };
   },
 
   methods: {
-    nextPage() {
-      this.page = Math.min(this.page + 1, this.total);
+    goToPage(page) {
+      this.page = page;
       this.$emit('navigate', this.page);
+    },
+
+    nextPage() {
+      this.goToPage(Math.min(this.currentPage + 1, this.totalPages));
     },
 
     previousPage() {
-      this.page = Math.max(1, this.page - 1);
-      this.$emit('navigate', this.page);
+      this.goToPage(Math.max(1, this.currentPage - 1));
     },
-
-    toggleSplitMode() {
-      this.isSplitMode = !this.isSplitMode;
-      this.$emit('mode', 'split');
-    }
   },
-
-  computed: {
-    index() {
-      return Math.max(0, this.active[0] - 1);
-    },
-
-    activePages() {
-      return this.active.join(' - ');
-    },
-
-    total() {
-      return this.pages.length;
-    },
-  }
 }
 </script>
 
 <template>
-<div class="reader-navigation" :class="{ expanded: isThumbnailExpanded }">
+<div class="reader-navigation">
   <div class="pages-info-bar">
+    <!-- First page -->
+    <button class="tool" style="height: 24px;" title="First page" @click="goToPage(1)"
+      :class="{'opacity-50 cursor-deny': page === 1}">
+      <fi-chevrons-left></fi-chevrons-left>
+    </button>
+
     <!-- Previous page -->
-    <button class="tool" style="height: 24px;" title="Previous page" @click="previousPage()">
+    <button class="tool" style="height: 24px;" title="Previous page" @click="previousPage()"
+      :class="{'opacity-50 cursor-deny': page === 1}">
       <fi-chevron-left></fi-chevron-left>
     </button>
 
     <!-- Current page / Number of pages -->
     <span class="tool text-sm page-number" title="Page number">
-      <span>{{ activePages }}</span> <span class="text-grey-darker">/ {{ total }}</span>
+      <span>{{ currentPage }}</span> <span class="text-grey-darker">/ {{ totalPages }}</span>
     </span>
 
     <!-- Next page -->
-    <button class="tool" style="height: 24px;" title="Next page" @click="nextPage()">
+    <button class="tool" style="height: 24px;" title="Next page" @click="nextPage()"
+      :class="{'opacity-50 cursor-deny': page === totalPages}">
       <fi-chevron-right></fi-chevron-right>
     </button>
 
-    <!-- Toogle Thumbnails -->
-    <button class="tool" style="height: 24px;" title="More options"
-      @click="isThumbnailExpanded = !isThumbnailExpanded">
-      <fi :icon="!isThumbnailExpanded ? 'chevron-up' : 'chevron-down'"></fi>
+    <!-- Last page -->
+    <button class="tool" style="height: 24px;" title="Last page" @click="goToPage(totalPages)"
+      :class="{'opacity-50 cursor-deny': page === totalPages}">
+      <fi-chevrons-right></fi-chevrons-right>
     </button>
   </div>
-
-  <!-- Navigation thumbnails -->
-  <transition name="slide-up">
-    <reader-navigation-thumbnails :active="active" :pages="pages" v-show="isThumbnailExpanded">
-      <!-- Close the thumbnails -->
-      <button class="tool text-grey-dark hover:text-grey" @click="isThumbnailExpanded = false">
-        <fi-x></fi-x>
-      </button>
-
-      <!-- Split mode -->
-      <button class="tool text-grey-dark hover:text-grey" title="Split mode"
-        @click="toggleSplitMode" :class="{active: isSplitMode}">
-        <fi-book-open></fi-book-open>
-      </button>
-    </reader-navigation-thumbnails>
-  </transition>
 </div>
 </template>

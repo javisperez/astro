@@ -155,15 +155,15 @@ class Importer {
   */
   fromCache(name) {
     const collected = fs.readdirSync(name)
-    .map(f => new File({
-      name: f,
-      size: fs.statSync(path.join(name, f)).size,
-      isDirectory: false,
-    }))
-    .map(f => {
-      f.path = path.join(name, f.name);
-      return f;
-    });
+      .map(f => new File({
+        name: f,
+        size: fs.statSync(path.join(name, f)).size,
+        isDirectory: false,
+      }))
+      .map(f => {
+        f.path = path.join(name, f.name);
+        return f;
+      });
 
     return new Collection(collected);
   }
